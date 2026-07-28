@@ -29,7 +29,9 @@
         
         .result { margin-top: 20px; background: #fff; padding: 20px; border-radius: 12px; border-left: 6px solid var(--primary); display: none; }
         .result-title { font-size: 0.8rem; color: #666; text-transform: uppercase; }
-        .result-amount { font-size: 2.2rem; font-weight: 900; color: #000; margin: 5px 0; }
+        
+        /* Ajuste para móvil: permitimos que baje de tamaño si es muy largo */
+        .result-amount { font-size: 2.2rem; font-weight: 900; color: #000; margin: 5px 0; word-wrap: break-word; overflow-wrap: break-word; }
         
         .audit { display: none; margin-top: 15px; max-height: 400px; overflow-y: auto; font-size: 0.85rem; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
         ul { padding-left: 0; margin: 0; list-style: none; }
@@ -44,6 +46,13 @@
             .card { box-shadow: none; border: none; width: 100%; background: white !important; }
             .result { display: block !important; border: 1px solid #ccc; margin-bottom: 20px; }
             .audit { display: block !important; max-height: none; overflow: visible; }
+        }
+        
+        /* Ajuste específico para pantallas muy pequeñas (móviles antiguos) */
+        @media (max-width: 360px) {
+            .result-amount { font-size: 1.8rem; }
+            .card { padding: 15px; }
+            h1 { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -109,8 +118,8 @@
         </div>
 
         <div class="result" id="panelResultado">
-            <div class="result-title">Total en Bruto Estimado:</div>
-            <div class="result-amount" id="txtResultado">$ 0,00</div>
+            <div class="result-title">Total Líquido Estimado:</div>
+            <div class="result-amount" id="txtResultado">0,00</div>
             <div id="txtDetalle" style="font-size: 0.9rem; line-height: 1.4; margin-top: 8px;"></div>
         </div>
 
@@ -167,7 +176,13 @@
         selClase.appendChild(opt);
     }
 
+    // Corrección: Función FMT ya no incluye el signo $
     function fmt(val) {
+        return val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+    
+    // Función FMT auxiliar para mantener el $ en el detalle paso a paso
+    function fmtConSigno(val) {
         return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
@@ -242,26 +257,30 @@
         // Salida de Datos
         document.getElementById("panelResultado").style.display = "block";
         document.getElementById("controlesExtra").style.display = "block";
+        
+        // Usamos FMT sin signo pesos
         document.getElementById("txtResultado").innerText = fmt(total);
+        
+        // Usamos fmtConSigno para el detalle
         document.getElementById("txtDetalle").innerHTML = `
-            <strong>Antigüedad computada: ${aniosAntig} años.
+            <strong>Subtotal: ${fmtConSigno(subtotal)}</strong> | Antigüedad computada: ${aniosAntig} años.
         `;
 
         document.getElementById("panelAudit").innerHTML = `
-            <p><strong>Detalle de Haberes en Bruto (Régimen 15):</strong></p>
+            <p><strong>Detalle de Haberes (Régimen 15):</strong></p>
             <ul>
-                <li><span>Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
-                <li><span>Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
-                ${adicTitulo ? `<li><span>Adicional Título:</span> <span class="monto">${fmt(adicTitulo)}</span></li>` : ''}
-                <li><span>Ítem Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
-                <li><span>Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
-                <li><span>Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
-                <li><span>Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmt(antiguedad)}</span></li>
-                <li><span>Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
-                ${adicSalud ? `<li><span>Centro de Salud (20% Cl.8):</span> <span class="monto">${fmt(adicSalud)}</span></li>` : ''}
-                ${adicAtencion ? `<li><span>Atención Directa (10%):</span> <span class="monto">${fmt(adicAtencion)}</span></li>` : ''}
-                ${guardiaHosp ? `<li><span>Guardia Hospitalaria (35% Cl.9):</span> <span class="monto">${fmt(guardiaHosp)}</span></li>` : ''}
-                ${asigHijos ? `<li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmt(asigHijos)}</span></li>` : ''}
+                <li><span>(1003) Asignación de Clase:</span> <span class="monto">${fmtConSigno(asigClase)}</span></li>
+                <li><span>(1376) Riesgo Psicofísico:</span> <span class="monto">${fmtConSigno(riesgoPsico)}</span></li>
+                ${adicTitulo ? `<li><span>(1773) Adicional Título:</span> <span class="monto">${fmtConSigno(adicTitulo)}</span></li>` : ''}
+                <li><span>(1414) Ítem Paritaria 2022:</span> <span class="monto">${fmtConSigno(item1414)}</span></li>
+                <li><span>(1399) Mayor Horario:</span> <span class="monto">${fmtConSigno(mayorHorario)}</span></li>
+                <li><span>(1293) Estado Sanitario:</span> <span class="monto">${fmtConSigno(estadoSanitario)}</span></li>
+                <li><span>(1716) Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmtConSigno(antiguedad)}</span></li>
+                <li><span>(2719) Presentismo:</span> <span class="monto">${fmtConSigno(presentismo)}</span></li>
+                ${adicSalud ? `<li><span>Centro de Salud (20% Cl.8):</span> <span class="monto">${fmtConSigno(adicSalud)}</span></li>` : ''}
+                ${adicAtencion ? `<li><span>Atención Directa (10%):</span> <span class="monto">${fmtConSigno(adicAtencion)}</span></li>` : ''}
+                ${guardiaHosp ? `<li><span>Guardia Hospitalaria (35% Cl.9):</span> <span class="monto">${fmtConSigno(guardiaHosp)}</span></li>` : ''}
+                ${asigHijos ? `<li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmtConSigno(asigHijos)}</span></li>` : ''}
             </ul>
         `;
     }
