@@ -111,7 +111,7 @@
             <div class="checkbox-group">
                 <label><input type="checkbox" id="chkSalud"> Adicional Centro de Salud</label>
                 <label><input type="checkbox" id="chkAtencionDirecta"> Adicional Atención Directa</label>
-                <label><input type="checkbox" id="chkGuardia" checked> Guardia Hospitalaria</label>
+                <label><input type="checkbox" id="chkGuardia"> Guardia Hospitalaria</label>
             </div>
 
             <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
@@ -241,8 +241,7 @@
         const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud + guardiaHosp;
         const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
         
-        // Subtotal de Haberes
-        const subtotal = asigClase + riesgoPsico + adicTitulo + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion + guardiaHosp;
+        
         
         // Asignaciones Familiares por Hijos
         let asigHijos = 0;
