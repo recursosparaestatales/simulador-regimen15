@@ -30,7 +30,7 @@
         .result-title { font-size: 0.8rem; color: #666; text-transform: uppercase; }
         .result-amount { font-size: 2.2rem; font-weight: 900; color: #000; margin: 5px 0; }
         
-        .audit { display: none; margin-top: 15px; max-height: 380px; overflow-y: auto; font-size: 0.85rem; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        .audit { display: none; margin-top: 15px; max-height: 400px; overflow-y: auto; font-size: 0.85rem; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
         ul { padding-left: 0; margin: 0; list-style: none; }
         li { margin-bottom: 6px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px; display: flex; justify-content: space-between; }
         .monto { font-weight: bold; color: var(--dark); }
@@ -85,14 +85,26 @@
                     <select id="clase"></select>
                 </div>
                 <div class="input-group">
-                    <label>Cant. Hijos</label>
-                    <input type="number" id="hijos" value="0" min="0">
+                    <label>Título</label>
+                    <select id="titulo">
+                        <option value="UNIVERSITARIO">Universitario (90%)</option>
+                        <option value="TERCIARIO">Terciario (80%)</option>
+                        <option value="SECUNDARIO">Secundario (40%)</option>
+                        <option value="CERTIFICACION">Certificación (30%)</option>
+                        <option value="PRIMARIO" selected>Primario (0%)</option>
+                    </select>
                 </div>
+            </div>
+
+            <div class="input-group">
+                <label>Cantidad de Hijos</label>
+                <input type="number" id="hijos" value="0" min="0">
             </div>
 
             <div class="checkbox-group">
                 <label><input type="checkbox" id="chkSalud"> Adicional Centro de Salud (20% Cl. 8)</label>
                 <label><input type="checkbox" id="chkAtencionDirecta"> Adicional Atención Directa (10% Clase)</label>
+                <label><input type="checkbox" id="chkGuardia"> Guardia Hospitalaria (35% Cl. 9)</label>
             </div>
 
             <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
@@ -123,6 +135,14 @@
         5: 156029.00, 6: 160958.11, 7: 164900.68, 8: 167857.45,
         9: 172785.24, 10: 177713.41, 11: 182641.54, 12: 187569.16,
         13: 193482.70, 14: 205309.81, 15: 241777.09, 16: 266416.93, 17: 302883.95
+    };
+
+    const PORCENTAJE_TITULO = {
+        "UNIVERSITARIO": 0.9,
+        "TERCIARIO": 0.8,
+        "SECUNDARIO": 0.4,
+        "CERTIFICACION": 0.3,
+        "PRIMARIO": 0.0
     };
 
     const COEF_1414 = {
@@ -164,40 +184,52 @@
     function ejecutarCalculo() {
         const agrup = document.getElementById("agrupamiento").value;
         const clase = parseInt(document.getElementById("clase").value);
+        const tituloKey = document.getElementById("titulo").value;
         const fCalc = document.getElementById("fechaCalculo").value;
         const fIng = document.getElementById("fechaIngreso").value;
         const hijos = parseInt(document.getElementById("hijos").value) || 0;
+        
         const chkSalud = document.getElementById("chkSalud").checked;
         const chkAtencion = document.getElementById("chkAtencionDirecta").checked;
+        const chkGuardia = document.getElementById("chkGuardia").checked;
 
-        // Cálculos exactos replicados del Excel
+        // 1. Asignación de Clase (1003)
         const asigClase = VALORES_CLASE[clase];
+        
+        // 2. Riesgo Psicofísico (1376)
         const riesgoPsico = Math.round(asigClase * 0.82 * 100) / 100;
         
+        // 3. Adicional Título (1773/1772)
+        const adicTitulo = Math.round(asigClase * PORCENTAJE_TITULO[tituloKey] * 100) / 100;
+
+        // 4. Ítem Paritaria 2022 (1414)
         const clase13 = VALORES_CLASE[13];
         const item1414 = Math.round(clase13 * COEF_1414[agrup] * 100) / 100;
         
+        // 5. Mayor Horario (1399)
         const mayorHorario = (asigClase / 25) * 2.1 * 15;
         
-        // Estado Sanitario (1293)
+        // 6. Estado Sanitario (1293)
         const baseSanidad = (agrup === "II ENFERMERIA") ? asigClase : VALORES_CLASE[8];
         const estadoSanitario = baseSanidad * COEF_SANIDAD[agrup];
         
-        // Antigüedad (1716)
+        // 7. Antigüedad (1716)
         const aniosAntig = calcularAntiguedadAnios(fCalc, fIng);
         const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
         
-        // Adicionales
+        // Adicionales Opcionales
         const adicSalud = chkSalud ? (VALORES_CLASE[8] * 0.2) : 0;
         const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
-        
-        // Presentismo (2719)
-        const basePresentismo = asigClase + riesgoPsico + mayorHorario + estadoSanitario + antiguedad + adicSalud;
+        const guardiaHosp = chkGuardia ? (VALORES_CLASE[9] * 0.35) : 0;
+
+        // 8. Presentismo (2719): incluye Titulo + Salud
+        const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud;
         const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
         
-        const subtotal = asigClase + riesgoPsico + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion;
+        // Subtotal de Haberes
+        const subtotal = asigClase + riesgoPsico + adicTitulo + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion + guardiaHosp;
         
-        // Asignaciones Familiares (Escala)
+        // Asignaciones Familiares por Hijos
         let asigHijos = 0;
         if (hijos > 0) {
             if (subtotal <= 790000) asigHijos = 35000 * hijos;
@@ -207,12 +239,12 @@
 
         const total = subtotal + asigHijos;
 
-        // Renderizado de Resultados
+        // Salida de Datos
         document.getElementById("panelResultado").style.display = "block";
         document.getElementById("controlesExtra").style.display = "block";
         document.getElementById("txtResultado").innerText = fmt(total);
         document.getElementById("txtDetalle").innerHTML = `
-            <strong>Resumen:</strong> Subtotal: ${fmt(subtotal)} | Antigüedad computada: ${aniosAntig} años.
+            <strong>Resumen del Cálculo:</strong> Subtotal: ${fmt(subtotal)} | Antigüedad computada: ${aniosAntig} años.
         `;
 
         document.getElementById("panelAudit").innerHTML = `
@@ -220,6 +252,7 @@
             <ul>
                 <li><span>(1003) Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
                 <li><span>(1376) Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
+                ${adicTitulo ? `<li><span>(1773) Adicional Título:</span> <span class="monto">${fmt(adicTitulo)}</span></li>` : ''}
                 <li><span>(1414) Ítem Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
                 <li><span>(1399) Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
                 <li><span>(1293) Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
@@ -227,7 +260,8 @@
                 <li><span>(2719) Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
                 ${adicSalud ? `<li><span>Centro de Salud (20% Cl.8):</span> <span class="monto">${fmt(adicSalud)}</span></li>` : ''}
                 ${adicAtencion ? `<li><span>Atención Directa (10%):</span> <span class="monto">${fmt(adicAtencion)}</span></li>` : ''}
-                <li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmt(asigHijos)}</span></li>
+                ${guardiaHosp ? `<li><span>Guardia Hospitalaria (35% Cl.9):</span> <span class="monto">${fmt(guardiaHosp)}</span></li>` : ''}
+                ${asigHijos ? `<li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmt(asigHijos)}</span></li>` : ''}
             </ul>
         `;
     }
