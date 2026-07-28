@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Haberes - Régimen 15 Mendoza</title>
+    <style>
+        :root { --primary: #38B000; --dark: #1b4332; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdfdfd; display: flex; justify-content: center; padding: 20px; color: #333; }
+        .container { width: 100%; max-width: 520px; }
+        .card { background: #F0F9CF; padding: 25px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid #d4e3a3; }
+        h1 { text-align: center; font-size: 1.3rem; margin-bottom: 20px; color: #000; font-weight: 800; text-transform: uppercase; line-height: 1.2; }
+        
+        .input-group { margin-bottom: 12px; }
+        label { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; color: var(--dark); }
+        select, input[type="date"], input[type="number"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #bccca3; font-size: 0.95rem; box-sizing: border-box; background: white; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .checkbox-group { background: rgba(255,255,255,0.6); padding: 10px 12px; border-radius: 8px; margin: 15px 0; border: 1px dashed var(--primary); display: flex; flex-direction: column; gap: 8px; }
+        .checkbox-group label { margin: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; color: #000; }
+        
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
+        .btn-calcular { background: var(--primary); color: white; box-shadow: 0 4px 0 #2d8a00; }
+        .btn-calcular:active { transform: translateY(3px); box-shadow: none; }
+        
+        .btn-auditoria { background: white; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
+        .btn-print { background: #000; color: white; margin-top: 5px; }
+        
+        .result { margin-top: 20px; background: #fff; padding: 20px; border-radius: 12px; border-left: 6px solid var(--primary); display: none; }
+        .result-title { font-size: 0.8rem; color: #666; text-transform: uppercase; }
+        .result-amount { font-size: 2.2rem; font-weight: 900; color: #000; margin: 5px 0; }
+        
+        .audit { display: none; margin-top: 15px; max-height: 380px; overflow-y: auto; font-size: 0.85rem; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        ul { padding-left: 0; margin: 0; list-style: none; }
+        li { margin-bottom: 6px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px; display: flex; justify-content: space-between; }
+        .monto { font-weight: bold; color: var(--dark); }
+
+        .disclaimer { margin-top: 20px; font-size: 0.75rem; color: #666; line-height: 1.4; border-top: 1px solid #ccc; padding-top: 10px; text-align: justify; }
+
+        @media print {
+            .no-print, button, input, label, select, .checkbox-group { display: none !important; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; border: none; width: 100%; background: white !important; }
+            .result { display: block !important; border: 1px solid #ccc; margin-bottom: 20px; }
+            .audit { display: block !important; max-height: none; overflow: visible; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>Simulador de Haberes<br><small style="font-size:0.8rem; font-weight:normal;">Régimen 15 - Salud Mendoza</small></h1>
+
+        <div class="no-print">
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Fecha de Cálculo</label>
+                    <input type="date" id="fechaCalculo" value="2026-06-01">
+                </div>
+                <div class="input-group">
+                    <label>Fecha de Ingreso</label>
+                    <input type="date" id="fechaIngreso" value="2016-07-01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Agrupamiento</label>
+                <select id="agrupamiento">
+                    <option value="I ADM Y TECN">I - Administrativo y Técnico</option>
+                    <option value="II ENFERMERIA">II - Enfermería y Técnico Asistencial</option>
+                    <option value="III PROF SIN CERT">III - Profesional sin Certificación</option>
+                    <option value="III PROF CON CERT">III - Profesional con Certificación</option>
+                    <option value="IV PROFESIONAL ASISTE">IV - Profesional y Sanitario</option>
+                    <option value="V SERV GRALES" selected>V - Servicios Generales</option>
+                    <option value="VI MANTENIMIENTO">VI - Mantenimiento y Producción</option>
+                    <option value="VII ASISTENCIA Y DISCAP">VII - Asistencia a la Ancianidad y Discap.</option>
+                    <option value="VIII SISTEMATIZACION DE DATOS">VIII - Sistematización de Datos</option>
+                </select>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Clase</label>
+                    <select id="clase"></select>
+                </div>
+                <div class="input-group">
+                    <label>Cant. Hijos</label>
+                    <input type="number" id="hijos" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="chkSalud"> Adicional Centro de Salud (20% Cl. 8)</label>
+                <label><input type="checkbox" id="chkAtencionDirecta"> Adicional Atención Directa (10% Clase)</label>
+            </div>
+
+            <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
+        </div>
+
+        <div class="result" id="panelResultado">
+            <div class="result-title">Total Líquido Estimado:</div>
+            <div class="result-amount" id="txtResultado">$ 0,00</div>
+            <div id="txtDetalle" style="font-size: 0.9rem; line-height: 1.4; margin-top: 8px;"></div>
+        </div>
+
+        <div id="controlesExtra" style="display:none;">
+            <button class="btn-auditoria no-print" onclick="toggleAudit()">Ver detalle de Ítems (Recibo)</button>
+            <div class="audit" id="panelAudit"></div>
+            <button class="btn-print no-print" onclick="window.print()">Imprimir o Guardar PDF</button>
+            
+            <div class="disclaimer">
+                <strong>Nota:</strong> Esta herramienta es un simulador de carácter <strong>orientativo</strong> elaborado en base a los coeficientes y escalas vigentes para el Régimen 15. Los montos finales pueden variar según descuentos de ley específicos o retenciones personales.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tablas de Valores de la Planilla Excel
+    const VALORES_CLASE = {
+        1: 128433.53, 2: 133361.77, 3: 138289.88, 4: 148145.39,
+        5: 156029.00, 6: 160958.11, 7: 164900.68, 8: 167857.45,
+        9: 172785.24, 10: 177713.41, 11: 182641.54, 12: 187569.16,
+        13: 193482.70, 14: 205309.81, 15: 241777.09, 16: 266416.93, 17: 302883.95
+    };
+
+    const COEF_1414 = {
+        "I ADM Y TECN": 1.2, "II ENFERMERIA": 1.8, "III PROF SIN CERT": 1.2,
+        "III PROF CON CERT": 1.45, "IV PROFESIONAL ASISTE": 1.8, "V SERV GRALES": 1.45,
+        "VI MANTENIMIENTO": 1.45, "VII ASISTENCIA Y DISCAP": 1.8, "VIII SISTEMATIZACION DE DATOS": 1.2
+    };
+
+    const COEF_SANIDAD = {
+        "I ADM Y TECN": 0.1510287, "II ENFERMERIA": 0.6009645, "III PROF SIN CERT": 0.15,
+        "III PROF CON CERT": 0.15, "IV PROFESIONAL ASISTE": 0.30075357, "V SERV GRALES": 0.30075357,
+        "VI MANTENIMIENTO": 0.30075357, "VII ASISTENCIA Y DISCAP": 0.50098827, "VIII SISTEMATIZACION DE DATOS": 0
+    };
+
+    // Cargar selector de Clases
+    const selClase = document.getElementById("clase");
+    for(let i=1; i<=17; i++) {
+        let opt = document.createElement("option");
+        opt.value = i; opt.innerText = "Clase " + i;
+        if(i === 5) opt.selected = true;
+        selClase.appendChild(opt);
+    }
+
+    function fmt(val) {
+        return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function calcularAntiguedadAnios(fCalc, fIng) {
+        let d3 = new Date(fCalc);
+        let d5 = new Date(fIng);
+        let limite = new Date(d3.getFullYear() - 1, 11, 31);
+        if (d5 > limite) return 0;
+        let anios = limite.getFullYear() - d5.getFullYear();
+        let diffMeses = limite.getMonth() - d5.getMonth();
+        if (diffMeses >= 6) anios += 1;
+        return Math.max(0, anios);
+    }
+
+    function ejecutarCalculo() {
+        const agrup = document.getElementById("agrupamiento").value;
+        const clase = parseInt(document.getElementById("clase").value);
+        const fCalc = document.getElementById("fechaCalculo").value;
+        const fIng = document.getElementById("fechaIngreso").value;
+        const hijos = parseInt(document.getElementById("hijos").value) || 0;
+        const chkSalud = document.getElementById("chkSalud").checked;
+        const chkAtencion = document.getElementById("chkAtencionDirecta").checked;
+
+        // Cálculos exactos replicados del Excel
+        const asigClase = VALORES_CLASE[clase];
+        const riesgoPsico = Math.round(asigClase * 0.82 * 100) / 100;
+        
+        const clase13 = VALORES_CLASE[13];
+        const item1414 = Math.round(clase13 * COEF_1414[agrup] * 100) / 100;
+        
+        const mayorHorario = (asigClase / 25) * 2.1 * 15;
+        
+        // Estado Sanitario (1293)
+        const baseSanidad = (agrup === "II ENFERMERIA") ? asigClase : VALORES_CLASE[8];
+        const estadoSanitario = baseSanidad * COEF_SANIDAD[agrup];
+        
+        // Antigüedad (1716)
+        const aniosAntig = calcularAntiguedadAnios(fCalc, fIng);
+        const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
+        
+        // Adicionales
+        const adicSalud = chkSalud ? (VALORES_CLASE[8] * 0.2) : 0;
+        const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
+        
+        // Presentismo (2719)
+        const basePresentismo = asigClase + riesgoPsico + mayorHorario + estadoSanitario + antiguedad + adicSalud;
+        const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
+        
+        const subtotal = asigClase + riesgoPsico + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion;
+        
+        // Asignaciones Familiares (Escala)
+        let asigHijos = 0;
+        if (hijos > 0) {
+            if (subtotal <= 790000) asigHijos = 35000 * hijos;
+            else if (subtotal <= 1185000) asigHijos = 27000 * hijos;
+            else if (subtotal <= 2700000) asigHijos = 18000 * hijos;
+        }
+
+        const total = subtotal + asigHijos;
+
+        // Renderizado de Resultados
+        document.getElementById("panelResultado").style.display = "block";
+        document.getElementById("controlesExtra").style.display = "block";
+        document.getElementById("txtResultado").innerText = fmt(total);
+        document.getElementById("txtDetalle").innerHTML = `
+            <strong>Resumen:</strong> Subtotal: ${fmt(subtotal)} | Antigüedad computada: ${aniosAntig} años.
+        `;
+
+        document.getElementById("panelAudit").innerHTML = `
+            <p><strong>Detalle de Haberes (Régimen 15):</strong></p>
+            <ul>
+                <li><span>(1003) Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
+                <li><span>(1376) Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
+                <li><span>(1414) Ítem Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
+                <li><span>(1399) Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
+                <li><span>(1293) Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
+                <li><span>(1716) Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmt(antiguedad)}</span></li>
+                <li><span>(2719) Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
+                ${adicSalud ? `<li><span>Centro de Salud (20% Cl.8):</span> <span class="monto">${fmt(adicSalud)}</span></li>` : ''}
+                ${adicAtencion ? `<li><span>Atención Directa (10%):</span> <span class="monto">${fmt(adicAtencion)}</span></li>` : ''}
+                <li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmt(asigHijos)}</span></li>
+            </ul>
+        `;
+    }
+
+    function toggleAudit() {
+        const p = document.getElementById("panelAudit");
+        p.style.display = (p.style.display === "block") ? "none" : "block";
+    }
+</script>
+
+</body>
+</html>
