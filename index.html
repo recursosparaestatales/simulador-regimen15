@@ -26,6 +26,7 @@
         
         .btn-auditoria { background: white; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
         .btn-print { background: #000; color: white; margin-top: 5px; }
+        .btn-limpiar { background: #6c757d; color: white; margin-top: 5px; }
         
         .result { margin-top: 20px; background: #fff; padding: 20px; border-radius: 12px; border-left: 6px solid var(--primary); display: none; }
         .result-title { font-size: 0.8rem; color: #666; text-transform: uppercase; }
@@ -124,6 +125,7 @@
             <button class="btn-auditoria no-print" onclick="toggleAudit()">Ver detalle de Ítems (Recibo)</button>
             <div class="audit" id="panelAudit"></div>
             <button class="btn-print no-print" onclick="window.print()">Imprimir o Guardar PDF</button>
+            <button class="btn-limpiar no-print" onclick="reiniciarSimulador()">NUEVO CÁLCULO</button>
             
             <div class="disclaimer">
                 <strong>Nota:</strong> Esta herramienta es un simulador de carácter <strong>orientativo</strong> vigente para el Régimen 15. Los montos finales pueden variar.
@@ -278,6 +280,24 @@
     function toggleAudit() {
         const p = document.getElementById("panelAudit");
         p.style.display = (p.style.display === "block") ? "none" : "block";
+    }
+
+    function reiniciarSimulador() {
+        document.getElementById("fechaIngreso").value = "2016-04-01";
+        document.getElementById("agrupamiento").value = "II ENFERMERIA";
+        document.getElementById("clase").value = "11";
+        document.getElementById("titulo").value = "TERCIARIO";
+        document.getElementById("hijos").value = "1";
+
+        document.getElementById("chkSalud").checked = false;
+        document.getElementById("chkAtencionDirecta").checked = false;
+        document.getElementById("chkGuardia").checked = false;
+
+        document.getElementById("panelResultado").style.display = "none";
+        document.getElementById("controlesExtra").style.display = "none";
+        document.getElementById("panelAudit").style.display = "none";
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
