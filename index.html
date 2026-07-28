@@ -109,7 +109,7 @@
         </div>
 
         <div class="result" id="panelResultado">
-            <div class="result-title">Total Líquido Estimado:</div>
+            <div class="result-title">Total en Bruto Estimado:</div>
             <div class="result-amount" id="txtResultado">$ 0,00</div>
             <div id="txtDetalle" style="font-size: 0.9rem; line-height: 1.4; margin-top: 8px;"></div>
         </div>
@@ -248,16 +248,16 @@
         `;
 
         document.getElementById("panelAudit").innerHTML = `
-            <p><strong>Detalle de Haberes (Régimen 15):</strong></p>
+            <p><strong>Detalle de Haberes en Bruto (Régimen 15):</strong></p>
             <ul>
-                <li><span>(1003) Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
-                <li><span>(1376) Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
-                ${adicTitulo ? `<li><span>(1773) Adicional Título:</span> <span class="monto">${fmt(adicTitulo)}</span></li>` : ''}
-                <li><span>(1414) Ítem Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
-                <li><span>(1399) Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
-                <li><span>(1293) Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
-                <li><span>(1716) Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmt(antiguedad)}</span></li>
-                <li><span>(2719) Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
+                <li><span>Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
+                <li><span>Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
+                ${adicTitulo ? `<li><span>Adicional Título:</span> <span class="monto">${fmt(adicTitulo)}</span></li>` : ''}
+                <li><span>Ítem Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
+                <li><span>Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
+                <li><span>Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
+                <li><span>Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmt(antiguedad)}</span></li>
+                <li><span>Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
                 ${adicSalud ? `<li><span>Centro de Salud (20% Cl.8):</span> <span class="monto">${fmt(adicSalud)}</span></li>` : ''}
                 ${adicAtencion ? `<li><span>Atención Directa (10%):</span> <span class="monto">${fmt(adicAtencion)}</span></li>` : ''}
                 ${guardiaHosp ? `<li><span>Guardia Hospitalaria (35% Cl.9):</span> <span class="monto">${fmt(guardiaHosp)}</span></li>` : ''}
