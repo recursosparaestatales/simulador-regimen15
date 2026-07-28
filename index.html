@@ -29,8 +29,6 @@
         
         .result { margin-top: 20px; background: #fff; padding: 20px; border-radius: 12px; border-left: 6px solid var(--primary); display: none; }
         .result-title { font-size: 0.8rem; color: #666; text-transform: uppercase; }
-        
-        /* Ajuste para móvil: permitimos que baje de tamaño si es muy largo */
         .result-amount { font-size: 2.2rem; font-weight: 900; color: #000; margin: 5px 0; word-wrap: break-word; overflow-wrap: break-word; }
         
         .audit { display: none; margin-top: 15px; max-height: 400px; overflow-y: auto; font-size: 0.85rem; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
@@ -48,7 +46,6 @@
             .audit { display: block !important; max-height: none; overflow: visible; }
         }
         
-        /* Ajuste específico para pantallas muy pequeñas (móviles antiguos) */
         @media (max-width: 360px) {
             .result-amount { font-size: 1.8rem; }
             .card { padding: 15px; }
@@ -136,10 +133,8 @@
 </div>
 
 <script>
-    // Configuración del Administrador: Fecha fija de cálculo (Julio 2026)
     const FECHA_CALCULO_ADMIN = "2026-07-01";
 
-    // Tablas de Valores de la Planilla Excel
     const VALORES_CLASE = {
         1: 128433.53, 2: 133361.77, 3: 138289.88, 4: 148145.39,
         5: 156029.00, 6: 160958.11, 7: 164900.68, 8: 167857.45,
@@ -167,7 +162,6 @@
         "VI MANTENIMIENTO": 0.30075357, "VII ASISTENCIA Y DISCAP": 0.50098827, "VIII SISTEMATIZACION DE DATOS": 0
     };
 
-    // Cargar selector de Clases (Por defecto selección Clase 11)
     const selClase = document.getElementById("clase");
     for(let i=1; i<=17; i++) {
         let opt = document.createElement("option");
@@ -176,12 +170,10 @@
         selClase.appendChild(opt);
     }
 
-    // Corrección: Función FMT ya no incluye el signo $
     function fmt(val) {
         return val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
     
-    // Función FMT auxiliar para mantener el $ en el detalle paso a paso
     function fmtConSigno(val) {
         return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
@@ -237,11 +229,12 @@
         const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
         const guardiaHosp = chkGuardia ? (VALORES_CLASE[9] * 0.35) : 0;
 
-        // 8. Presentismo (2719): incluye Titulo + Salud + Guardia
+        // 8. Presentismo (2719)
         const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud + guardiaHosp;
         const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
         
-        
+        // Subtotal necesario para el cálculo interno de asignaciones
+        const subtotal = asigClase + riesgoPsico + adicTitulo + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion + guardiaHosp;
         
         // Asignaciones Familiares por Hijos
         let asigHijos = 0;
@@ -257,12 +250,10 @@
         document.getElementById("panelResultado").style.display = "block";
         document.getElementById("controlesExtra").style.display = "block";
         
-        // Usamos FMT sin signo pesos
         document.getElementById("txtResultado").innerText = fmt(total);
         
-        // Usamos fmtConSigno para el detalle
         document.getElementById("txtDetalle").innerHTML = `
-            <strong>Subtotal: ${fmtConSigno(subtotal)}</strong> | Antigüedad computada: ${aniosAntig} años.
+            <strong>Antigüedad computada: ${aniosAntig} años.</strong>
         `;
 
         document.getElementById("panelAudit").innerHTML = `
