@@ -9,7 +9,8 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdfdfd; display: flex; justify-content: center; padding: 20px; color: #333; }
         .container { width: 100%; max-width: 520px; }
         .card { background: #F0F9CF; padding: 25px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid #d4e3a3; }
-        h1 { text-align: center; font-size: 1.3rem; margin-bottom: 20px; color: #000; font-weight: 800; text-transform: uppercase; line-height: 1.2; }
+        h1 { text-align: center; font-size: 1.3rem; margin-bottom: 5px; color: #000; font-weight: 800; text-transform: uppercase; line-height: 1.2; }
+        .periodo-badge { text-align: center; font-size: 0.85rem; font-weight: bold; color: var(--dark); background: rgba(56, 176, 0, 0.15); padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 0 auto 20px auto; width: fit-content; }
         
         .input-group { margin-bottom: 12px; }
         label { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; color: var(--dark); }
@@ -50,29 +51,26 @@
 
 <div class="container">
     <div class="card">
-        <h1>Simulador de Haberes<br><small style="font-size:0.8rem; font-weight:normal;">Régimen 15 - Salud Mendoza</small></h1>
+        <div style="text-align: center;">
+            <h1>Simulador de Haberes</h1>
+            <div class="periodo-badge">Régimen 15 - Salud Mendoza (Julio 2026)</div>
+        </div>
 
         <div class="no-print">
-            <div class="grid-2">
-                <div class="input-group">
-                    <label>Fecha de Cálculo</label>
-                    <input type="date" id="fechaCalculo" value="2026-06-01">
-                </div>
-                <div class="input-group">
-                    <label>Fecha de Ingreso</label>
-                    <input type="date" id="fechaIngreso" value="2016-07-01">
-                </div>
+            <div class="input-group">
+                <label>Fecha de Ingreso del Agente</label>
+                <input type="date" id="fechaIngreso" value="2016-04-01">
             </div>
 
             <div class="input-group">
                 <label>Agrupamiento</label>
                 <select id="agrupamiento">
                     <option value="I ADM Y TECN">I - Administrativo y Técnico</option>
-                    <option value="II ENFERMERIA">II - Enfermería y Técnico Asistencial</option>
+                    <option value="II ENFERMERIA" selected>II - Enfermería y Técnico Asistencial</option>
                     <option value="III PROF SIN CERT">III - Profesional sin Certificación</option>
                     <option value="III PROF CON CERT">III - Profesional con Certificación</option>
                     <option value="IV PROFESIONAL ASISTE">IV - Profesional y Sanitario</option>
-                    <option value="V SERV GRALES" selected>V - Servicios Generales</option>
+                    <option value="V SERV GRALES">V - Servicios Generales</option>
                     <option value="VI MANTENIMIENTO">VI - Mantenimiento y Producción</option>
                     <option value="VII ASISTENCIA Y DISCAP">VII - Asistencia a la Ancianidad y Discap.</option>
                     <option value="VIII SISTEMATIZACION DE DATOS">VIII - Sistematización de Datos</option>
@@ -88,23 +86,23 @@
                     <label>Título</label>
                     <select id="titulo">
                         <option value="UNIVERSITARIO">Universitario (90%)</option>
-                        <option value="TERCIARIO">Terciario (80%)</option>
+                        <option value="TERCIARIO" selected>Terciario (80%)</option>
                         <option value="SECUNDARIO">Secundario (40%)</option>
                         <option value="CERTIFICACION">Certificación (30%)</option>
-                        <option value="PRIMARIO" selected>Primario (0%)</option>
+                        <option value="PRIMARIO">Primario (0%)</option>
                     </select>
                 </div>
             </div>
 
             <div class="input-group">
                 <label>Cantidad de Hijos</label>
-                <input type="number" id="hijos" value="0" min="0">
+                <input type="number" id="hijos" value="1" min="0">
             </div>
 
             <div class="checkbox-group">
                 <label><input type="checkbox" id="chkSalud"> Adicional Centro de Salud (20% Cl. 8)</label>
                 <label><input type="checkbox" id="chkAtencionDirecta"> Adicional Atención Directa (10% Clase)</label>
-                <label><input type="checkbox" id="chkGuardia"> Guardia Hospitalaria (35% Cl. 9)</label>
+                <label><input type="checkbox" id="chkGuardia" checked> Guardia Hospitalaria (35% Cl. 9)</label>
             </div>
 
             <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
@@ -129,6 +127,9 @@
 </div>
 
 <script>
+    // Configuración del Administrador: Fecha fija de cálculo (Julio 2026)
+    const FECHA_CALCULO_ADMIN = "2026-07-01";
+
     // Tablas de Valores de la Planilla Excel
     const VALORES_CLASE = {
         1: 128433.53, 2: 133361.77, 3: 138289.88, 4: 148145.39,
@@ -157,12 +158,12 @@
         "VI MANTENIMIENTO": 0.30075357, "VII ASISTENCIA Y DISCAP": 0.50098827, "VIII SISTEMATIZACION DE DATOS": 0
     };
 
-    // Cargar selector de Clases
+    // Cargar selector de Clases (Por defecto selección Clase 11)
     const selClase = document.getElementById("clase");
     for(let i=1; i<=17; i++) {
         let opt = document.createElement("option");
         opt.value = i; opt.innerText = "Clase " + i;
-        if(i === 5) opt.selected = true;
+        if(i === 11) opt.selected = true;
         selClase.appendChild(opt);
     }
 
@@ -170,9 +171,9 @@
         return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    function calcularAntiguedadAnios(fCalc, fIng) {
-        let d3 = new Date(fCalc);
-        let d5 = new Date(fIng);
+    function calcularAntiguedadAnios(fCalcStr, fIngStr) {
+        let d3 = new Date(fCalcStr);
+        let d5 = new Date(fIngStr);
         let limite = new Date(d3.getFullYear() - 1, 11, 31);
         if (d5 > limite) return 0;
         let anios = limite.getFullYear() - d5.getFullYear();
@@ -185,7 +186,6 @@
         const agrup = document.getElementById("agrupamiento").value;
         const clase = parseInt(document.getElementById("clase").value);
         const tituloKey = document.getElementById("titulo").value;
-        const fCalc = document.getElementById("fechaCalculo").value;
         const fIng = document.getElementById("fechaIngreso").value;
         const hijos = parseInt(document.getElementById("hijos").value) || 0;
         
@@ -214,7 +214,7 @@
         const estadoSanitario = baseSanidad * COEF_SANIDAD[agrup];
         
         // 7. Antigüedad (1716)
-        const aniosAntig = calcularAntiguedadAnios(fCalc, fIng);
+        const aniosAntig = calcularAntiguedadAnios(FECHA_CALCULO_ADMIN, fIng);
         const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
         
         // Adicionales Opcionales
@@ -222,8 +222,8 @@
         const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
         const guardiaHosp = chkGuardia ? (VALORES_CLASE[9] * 0.35) : 0;
 
-        // 8. Presentismo (2719): incluye Titulo + Salud
-        const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud;
+        // 8. Presentismo (2719): incluye Titulo + Salud + Guardia
+        const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud + guardiaHosp;
         const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
         
         // Subtotal de Haberes
