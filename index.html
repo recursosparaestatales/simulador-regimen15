@@ -3,55 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Haberes - Régimen 15 Mendoza</title>
+    <title>Régimen 15 - Salud Mendoza (Julio 2026)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #38B000; --dark: #1b4332; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdfdfd; display: flex; justify-content: center; padding: 20px; color: #333; }
-        .container { width: 100%; max-width: 520px; }
-        .card { background: #F0F9CF; padding: 25px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: 1px solid #d4e3a3; }
-        h1 { text-align: center; font-size: 1.3rem; margin-bottom: 5px; color: #000; font-weight: 800; text-transform: uppercase; line-height: 1.2; }
-        .periodo-badge { text-align: center; font-size: 0.85rem; font-weight: bold; color: var(--dark); background: rgba(56, 176, 0, 0.15); padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 0 auto 20px auto; width: fit-content; }
-        
-        .input-group { margin-bottom: 12px; }
-        label { font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px; color: var(--dark); }
-        select, input[type="date"], input[type="number"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #bccca3; font-size: 0.95rem; box-sizing: border-box; background: white; }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .checkbox-group { background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px dashed var(--primary); display: flex; flex-direction: column; gap: 8px; }
-        .checkbox-group label { margin: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.85rem; color: #000; }
-        .checkbox-legend { font-size: 0.8rem; font-weight: bold; color: var(--dark); margin-bottom: 4px; line-height: 1.3; }
+        :root {
+            --primary: #38B000;
+            --primary-hover: #2d8c00;
+            --primary-light: #E0F9CF;
+            --primary-ring: rgba(56, 176, 0, 0.25);
+            --dark-bg: #000000;
+            --card-bg: #FFFFFF;
+            --text-main: #000000;
+            --text-muted: #555555;
+            --bg-page: #E0F9CF;
+            --border-color: #c4eba8;
+            --border-hover: #a1de72;
+        }
 
-        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
-        .btn-calcular { background: var(--primary); color: white; box-shadow: 0 4px 0 #2d8a00; }
-        .btn-calcular:active { transform: translateY(3px); box-shadow: none; }
-        
-        .btn-auditoria { background: white; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
-        .btn-print { background: #000; color: white; margin-top: 5px; }
-        .btn-limpiar { background: #6c757d; color: white; margin-top: 5px; }
-        
-        .result { margin-top: 20px; background: #fff; padding: 20px; border-radius: 12px; border-left: 6px solid var(--primary); display: none; }
-        .result-title { font-size: 0.8rem; color: #666; text-transform: uppercase; }
-        .result-amount { font-size: 2.2rem; font-weight: 900; color: #000; margin: 5px 0; word-wrap: break-word; overflow-wrap: break-word; }
-        
-        .audit { display: none; margin-top: 15px; max-height: 400px; overflow-y: auto; font-size: 0.85rem; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
-        ul { padding-left: 0; margin: 0; list-style: none; }
-        li { margin-bottom: 6px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px; display: flex; justify-content: space-between; }
-        .monto { font-weight: bold; color: var(--dark); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-        .disclaimer { margin-top: 20px; font-size: 0.75rem; color: #666; line-height: 1.4; border-top: 1px solid #ccc; padding-top: 10px; text-align: justify; }
+        body {
+            background-color: var(--bg-page);
+            background-image: radial-gradient(at 50% 0%, #FFFFFF 0px, transparent 75%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 32px 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 36px 28px;
+            border-radius: 28px;
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: #1f6300;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--dark-bg);
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-bg);
+        }
+
+        select, input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1.5px solid var(--border-color);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-main);
+            background-color: #FFFFFF;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select:hover, input:hover {
+            border-color: var(--primary);
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 6px;
+            background-color: var(--dark-bg);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            pointer-events: none;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 4px var(--primary-ring);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* Toggles e Interruptores Estilizados */
+        .checkbox-container {
+            background: var(--primary-light);
+            padding: 18px;
+            border-radius: 20px;
+            margin: 24px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-legend {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #214f00;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .toggle-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .toggle-item input[type="checkbox"] {
+            display: none;
+        }
+
+        .toggle-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            flex-grow: 1;
+        }
+
+        .switch {
+            width: 42px;
+            height: 24px;
+            background-color: #d1d5db;
+            border-radius: 20px;
+            position: relative;
+            transition: background-color 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .switch::after {
+            content: "";
+            width: 18px;
+            height: 18px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .toggle-item input[type="checkbox"]:checked + .switch {
+            background-color: var(--primary);
+        }
+
+        .toggle-item input[type="checkbox"]:checked + .switch::after {
+            transform: translateX(18px);
+        }
+
+        .toggle-item.active {
+            border-color: var(--primary);
+            background-color: #FFFFFF;
+        }
+
+        /* Botón Principal */
+        .btn-calcular {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            background: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 10px 15px -3px rgba(56, 176, 0, 0.35);
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-calcular:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -3px rgba(56, 176, 0, 0.45);
+        }
+
+        .btn-calcular:active {
+            transform: translateY(0);
+        }
+
+        /* Tarjeta de Resultado (Estilo FinTech) */
+        .result {
+            margin-top: 24px;
+            background: var(--dark-bg);
+            color: #FFFFFF;
+            padding: 28px 24px;
+            border-radius: 22px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(56, 176, 0, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-size: 0.75rem;
+            color: #A3A3A3;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+
+        .result-amount {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            letter-spacing: -0.03em;
+            word-wrap: break-word;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #E0F9CF;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Botones Secundarios */
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .btn-auditoria {
+            background: #FFFFFF;
+            color: var(--dark-bg);
+            border: 1.5px solid var(--border-color);
+        }
+
+        .btn-auditoria:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .btn-print {
+            background: var(--dark-bg);
+            color: #FFFFFF;
+            border: none;
+        }
+
+        .btn-print:hover {
+            background: #222222;
+        }
+
+        .btn-limpiar {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-top: 14px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .btn-limpiar:hover {
+            color: var(--dark-bg);
+            text-decoration: underline;
+        }
+
+        .audit {
+            display: none;
+            margin-top: 16px;
+            max-height: 380px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            background: var(--primary-light);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        ul { list-style: none; }
+        li {
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--dark-bg);
+            font-weight: 500;
+        }
+        li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .monto { font-weight: 800; color: var(--dark-bg); }
+
+        .disclaimer {
+            margin-top: 24px;
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            text-align: center;
+        }
 
         @media print {
-            .no-print, button, input, label, select, .checkbox-group { display: none !important; }
+            .no-print, button, input, label, select, .checkbox-container { display: none !important; }
             body { background: white; padding: 0; }
-            .card { box-shadow: none; border: none; width: 100%; background: white !important; }
-            .result { display: block !important; border: 1px solid #ccc; margin-bottom: 20px; }
-            .audit { display: block !important; max-height: none; overflow: visible; }
-        }
-        
-        @media (max-width: 360px) {
-            .result-amount { font-size: 1.8rem; }
-            .card { padding: 15px; }
-            h1 { font-size: 1.1rem; }
+            .card { box-shadow: none; border: none; width: 100%; padding: 0; }
+            .result { display: block !important; background: white; color: black; border: 1px solid #ccc; box-shadow: none; }
+            .result-amount { color: black; }
+            .result-title { color: #666; }
+            .audit { display: block !important; max-height: none; background: white; }
         }
     </style>
 </head>
@@ -59,9 +417,9 @@
 
 <div class="container">
     <div class="card">
-        <div style="text-align: center;">
+        <div class="header-box">
+            <span class="header-tag">Régimen 15 - Salud Mendoza (Julio 2026)</span>
             <h1>Simulador de Haberes</h1>
-            <div class="periodo-badge">Régimen 15 - Salud Mendoza (Julio 2026)</div>
         </div>
 
         <div class="no-print">
@@ -72,69 +430,92 @@
 
             <div class="input-group">
                 <label>Agrupamiento</label>
-                <select id="agrupamiento">
-                    <option value="" disabled selected>-- Seleccione Agrupamiento --</option>
-                    <option value="I ADM Y TECN">I - Administrativo y Técnico</option>
-                    <option value="II ENFERMERIA">II - Enfermería y Técnico Asistencial</option>
-                    <option value="III PROF SIN CERT">III - Profesional sin Certificación</option>
-                    <option value="III PROF CON CERT">III - Profesional con Certificación</option>
-                    <option value="IV PROFESIONAL ASISTE">IV - Profesional y Sanitario</option>
-                    <option value="V SERV GRALES">V - Servicios Generales</option>
-                    <option value="VI MANTENIMIENTO">VI - Mantenimiento y Producción</option>
-                    <option value="VII ASISTENCIA Y DISCAP">VII - Asistencia a la Ancianidad y Discap.</option>
-                    <option value="VIII SISTEMATIZACION DE DATOS">VIII - Sistematización de Datos</option>
-                </select>
+                <div class="select-wrapper">
+                    <select id="agrupamiento">
+                        <option value="" disabled selected>-- Seleccione Agrupamiento --</option>
+                        <option value="I ADM Y TECN">I - Administrativo y Técnico</option>
+                        <option value="II ENFERMERIA">II - Enfermería y Técnico Asistencial</option>
+                        <option value="III PROF SIN CERT">III - Profesional sin Certificación</option>
+                        <option value="III PROF CON CERT">III - Profesional con Certificación</option>
+                        <option value="IV PROFESIONAL ASISTE">IV - Profesional y Sanitario</option>
+                        <option value="V SERV GRALES">V - Servicios Generales</option>
+                        <option value="VI MANTENIMIENTO">VI - Mantenimiento y Producción</option>
+                        <option value="VII ASISTENCIA Y DISCAP">VII - Asistencia a la Ancianidad y Discap.</option>
+                        <option value="VIII SISTEMATIZACION DE DATOS">VIII - Sistematización de Datos</option>
+                    </select>
+                </div>
             </div>
 
             <div class="grid-2">
                 <div class="input-group">
                     <label>Clase</label>
-                    <select id="clase">
-                        <option value="" disabled selected>-- Seleccione Clase --</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="clase">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>Título</label>
-                    <select id="titulo">
-                        <option value="" disabled selected>-- Seleccione Título --</option>
-                        <option value="UNIVERSITARIO">Universitario</option>
-                        <option value="TERCIARIO">Terciario</option>
-                        <option value="SECUNDARIO">Secundario</option>
-                        <option value="CERTIFICACION">Certificación</option>
-                        <option value="PRIMARIO">Primario</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="titulo">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                            <option value="UNIVERSITARIO">Universitario</option>
+                            <option value="TERCIARIO">Terciario</option>
+                            <option value="SECUNDARIO">Secundario</option>
+                            <option value="CERTIFICACION">Certificación</option>
+                            <option value="PRIMARIO">Primario</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <div class="input-group">
                 <label>Cantidad de Hijos (si correspondiere)</label>
-                <input type="number" id="hijos" placeholder="Indique cantidad (ej. 0, 1, 2...)" min="0">
+                <input type="number" id="hijos" placeholder="Ej. 0, 1, 2..." min="0">
             </div>
 
-            <div class="checkbox-group">
+            <div class="checkbox-container">
                 <div class="checkbox-legend">Seleccione únicamente si percibe alguno de los siguientes conceptos:</div>
-                <label><input type="checkbox" id="chkSalud"> Adicional Centro de Salud</label>
-                <label><input type="checkbox" id="chkAtencionDirecta"> Adicional Atención Directa</label>
-                <label><input type="checkbox" id="chkGuardia"> Guardia Hospitalaria</label>
+                
+                <div class="toggle-item" onclick="toggleCheckbox('chkSalud', this)">
+                    <label>Adicional Centro de Salud</label>
+                    <input type="checkbox" id="chkSalud">
+                    <div class="switch"></div>
+                </div>
+
+                <div class="toggle-item" onclick="toggleCheckbox('chkAtencionDirecta', this)">
+                    <label>Adicional Atención Directa</label>
+                    <input type="checkbox" id="chkAtencionDirecta">
+                    <div class="switch"></div>
+                </div>
+
+                <div class="toggle-item" onclick="toggleCheckbox('chkGuardia', this)">
+                    <label>Guardia Hospitalaria</label>
+                    <input type="checkbox" id="chkGuardia">
+                    <div class="switch"></div>
+                </div>
             </div>
 
             <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
         </div>
 
         <div class="result" id="panelResultado">
-            <div class="result-title">Total Bruto Estimado:</div>
-            <div class="result-amount" id="txtResultado">0,00</div>
-            <div id="txtDetalle" style="font-size: 0.9rem; line-height: 1.4; margin-top: 8px;"></div>
+            <div class="result-title">Total Bruto Estimado</div>
+            <div class="result-amount" id="txtResultado">$ 0,00</div>
+            <div class="result-badge" id="txtDetalle">Antigüedad: -</div>
         </div>
 
         <div id="controlesExtra" style="display:none;">
-            <button class="btn-auditoria no-print" onclick="toggleAudit()">Ver detalle de Ítems (Recibo)</button>
+            <button class="btn-secondary btn-auditoria no-print" onclick="toggleAudit()">Ver desglose de Ítems (Recibo)</button>
             <div class="audit" id="panelAudit"></div>
-            <button class="btn-print no-print" onclick="window.print()">Imprimir o Guardar PDF</button>
-            <button class="btn-limpiar no-print" onclick="reiniciarSimulador()">NUEVO CÁLCULO</button>
+            <button class="btn-secondary btn-print no-print" onclick="window.print()">Imprimir o Guardar PDF</button>
+            <div style="text-align: center;">
+                <button class="btn-limpiar no-print" onclick="reiniciarSimulador()">← Realizar otro cálculo</button>
+            </div>
             
             <div class="disclaimer">
-                <strong>Nota:</strong> Esta herramienta es un simulador de carácter <strong>orientativo</strong> vigente para el Régimen 15. Los montos finales pueden variar.
+                Simulador de carácter <strong>orientativo</strong> para el Régimen 15 (Julio 2026). Los montos finales pueden variar según liquidación oficial.
             </div>
         </div>
     </div>
@@ -179,11 +560,17 @@
     }
 
     function fmt(val) {
-        return val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    }
-    
-    function fmtConSigno(val) {
         return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function toggleCheckbox(id, container) {
+        const checkbox = document.getElementById(id);
+        checkbox.checked = !checkbox.checked;
+        if (checkbox.checked) {
+            container.classList.add('active');
+        } else {
+            container.classList.remove('active');
+        }
     }
 
     function calcularAntiguedadAnios(fCalcStr, fIngStr) {
@@ -205,7 +592,6 @@
         const hijosVal = document.getElementById("hijos").value;
         const hijos = parseInt(hijosVal) || 0;
 
-        // Validación de campos obligatorios
         if (!fIng || !agrup || isNaN(clase) || !tituloKey) {
             alert("Por favor, complete la Fecha de Ingreso, Agrupamiento, Clase y Título antes de calcular.");
             return;
@@ -215,43 +601,27 @@
         const chkAtencion = document.getElementById("chkAtencionDirecta").checked;
         const chkGuardia = document.getElementById("chkGuardia").checked;
 
-        // 1. Asignación de Clase (1003)
         const asigClase = VALORES_CLASE[clase];
-        
-        // 2. Riesgo Psicofísico (1376)
         const riesgoPsico = Math.round(asigClase * 0.82 * 100) / 100;
-        
-        // 3. Adicional Título (1773/1772)
         const adicTitulo = Math.round(asigClase * PORCENTAJE_TITULO[tituloKey] * 100) / 100;
-
-        // 4. Ítem Paritaria 2022 (1414)
         const clase13 = VALORES_CLASE[13];
         const item1414 = Math.round(clase13 * COEF_1414[agrup] * 100) / 100;
-        
-        // 5. Mayor Horario (1399)
         const mayorHorario = (asigClase / 25) * 2.1 * 15;
-        
-        // 6. Estado Sanitario (1293)
         const baseSanidad = (agrup === "II ENFERMERIA") ? asigClase : VALORES_CLASE[8];
         const estadoSanitario = baseSanidad * COEF_SANIDAD[agrup];
         
-        // 7. Antigüedad (1716)
         const aniosAntig = calcularAntiguedadAnios(FECHA_CALCULO_ADMIN, fIng);
         const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
         
-        // Adicionales Opcionales
         const adicSalud = chkSalud ? (VALORES_CLASE[8] * 0.2) : 0;
         const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
         const guardiaHosp = chkGuardia ? (VALORES_CLASE[9] * 0.35) : 0;
 
-        // 8. Presentismo (2719)
         const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud + guardiaHosp;
         const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
         
-        // Subtotal
         const subtotal = asigClase + riesgoPsico + adicTitulo + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion + guardiaHosp;
         
-        // Asignaciones Familiares por Hijos
         let asigHijos = 0;
         if (hijos > 0) {
             if (subtotal <= 790000) asigHijos = 35000 * hijos;
@@ -261,31 +631,27 @@
 
         const total = subtotal + asigHijos;
 
-        // Salida de Datos
         document.getElementById("panelResultado").style.display = "block";
         document.getElementById("controlesExtra").style.display = "block";
         
         document.getElementById("txtResultado").innerText = fmt(total);
-        
-        document.getElementById("txtDetalle").innerHTML = `
-            <strong>Antigüedad computada: ${aniosAntig} años.</strong>
-        `;
+        document.getElementById("txtDetalle").innerText = `Antigüedad computada: ${aniosAntig} años`;
 
         document.getElementById("panelAudit").innerHTML = `
-            <p><strong>Detalle de Haberes (Régimen 15):</strong></p>
+            <p style="font-weight:700; margin-bottom:12px; color:var(--dark-bg)">Detalle de Haberes (Régimen 15):</p>
             <ul>
-                <li><span>Asignación de Clase:</span> <span class="monto">${fmtConSigno(asigClase)}</span></li>
-                <li><span>Riesgo Psicofísico:</span> <span class="monto">${fmtConSigno(riesgoPsico)}</span></li>
-                ${adicTitulo ? `<li><span>Adicional Título:</span> <span class="monto">${fmtConSigno(adicTitulo)}</span></li>` : ''}
-                <li><span>(1414) Ítem Paritaria 2022:</span> <span class="monto">${fmtConSigno(item1414)}</span></li>
-                <li><span>Mayor Horario:</span> <span class="monto">${fmtConSigno(mayorHorario)}</span></li>
-                <li><span>Estado Sanitario:</span> <span class="monto">${fmtConSigno(estadoSanitario)}</span></li>
-                <li><span>Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmtConSigno(antiguedad)}</span></li>
-                <li><span>Presentismo:</span> <span class="monto">${fmtConSigno(presentismo)}</span></li>
-                ${adicSalud ? `<li><span>Centro de Salud (20% Cl.8):</span> <span class="monto">${fmtConSigno(adicSalud)}</span></li>` : ''}
-                ${adicAtencion ? `<li><span>Atención Directa (10%):</span> <span class="monto">${fmtConSigno(adicAtencion)}</span></li>` : ''}
-                ${guardiaHosp ? `<li><span>Guardia Hospitalaria (35% Cl.9):</span> <span class="monto">${fmtConSigno(guardiaHosp)}</span></li>` : ''}
-                ${asigHijos ? `<li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmtConSigno(asigHijos)}</span></li>` : ''}
+                <li><span>Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
+                <li><span>Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
+                ${adicTitulo ? `<li><span>Adicional Título:</span> <span class="monto">${fmt(adicTitulo)}</span></li>` : ''}
+                <li><span>(1414) Ítem Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
+                <li><span>Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
+                <li><span>Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
+                <li><span>Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmt(antiguedad)}</span></li>
+                <li><span>Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
+                ${adicSalud ? `<li><span>Centro de Salud:</span> <span class="monto">${fmt(adicSalud)}</span></li>` : ''}
+                ${adicAtencion ? `<li><span>Atención Directa:</span> <span class="monto">${fmt(adicAtencion)}</span></li>` : ''}
+                ${guardiaHosp ? `<li><span>Guardia Hospitalaria:</span> <span class="monto">${fmt(guardiaHosp)}</span></li>` : ''}
+                ${asigHijos ? `<li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmt(asigHijos)}</span></li>` : ''}
             </ul>
         `;
     }
@@ -302,9 +668,11 @@
         document.getElementById("titulo").value = "";
         document.getElementById("hijos").value = "";
 
-        document.getElementById("chkSalud").checked = false;
-        document.getElementById("chkAtencionDirecta").checked = false;
-        document.getElementById("chkGuardia").checked = false;
+        ['chkSalud', 'chkAtencionDirecta', 'chkGuardia'].forEach(id => {
+            const chk = document.getElementById(id);
+            chk.checked = false;
+            chk.parentElement.classList.remove('active');
+        });
 
         document.getElementById("panelResultado").style.display = "none";
         document.getElementById("controlesExtra").style.display = "none";
