@@ -124,7 +124,7 @@
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            width: 100px;
+            width: 10px;
             height: 6px;
             background-color: var(--dark-bg);
             clip-path: polygon(0 0, 100% 0, 50% 100%);
@@ -474,19 +474,19 @@
             <div class="checkbox-container">
                 <div class="checkbox-legend">Seleccione únicamente si percibe alguno de los siguientes conceptos:</div>
                 
-                <div class="toggle-item" onclick="toggleCheckbox('chkSalud', this)">
+                <div class="toggle-item" onclick="toggleCheckbox('chkSalud', this, event)">
                     <label for="chkSalud">Adicional Centro de Salud</label>
                     <input type="checkbox" id="chkSalud">
                     <div class="switch"></div>
                 </div>
 
-                <div class="toggle-item" onclick="toggleCheckbox('chkAtencionDirecta', this)">
+                <div class="toggle-item" onclick="toggleCheckbox('chkAtencionDirecta', this, event)">
                     <label for="chkAtencionDirecta">Adicional Atención Directa</label>
                     <input type="checkbox" id="chkAtencionDirecta">
                     <div class="switch"></div>
                 </div>
 
-                <div class="toggle-item" onclick="toggleCheckbox('chkGuardia', this)">
+                <div class="toggle-item" onclick="toggleCheckbox('chkGuardia', this, event)">
                     <label for="chkGuardia">Guardia Hospitalaria</label>
                     <input type="checkbox" id="chkGuardia">
                     <div class="switch"></div>
@@ -520,6 +520,7 @@
 <script>
     const FECHA_CALCULO_ADMIN = "2026-07-01";
 
+    // Valores corregidos a sintaxis numérica válida en JS
     const VALORES_CLASE = {
         1: 137423.87, 2: 142697.09, 3: 147970.18, 4: 158515.57,
         5: 166952.09, 6: 172225.18, 7: 176443.73, 8: 179607.47,
@@ -559,9 +560,13 @@
         return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    function toggleCheckbox(id, container) {
+    // Corrección para evitar el doble disparo del checkbox al hacer clic
+    function toggleCheckbox(id, container, event) {
+        if (event.target.tagName !== 'INPUT') {
+            const checkbox = document.getElementById(id);
+            checkbox.checked = !checkbox.checked;
+        }
         const checkbox = document.getElementById(id);
-        checkbox.checked = !checkbox.checked;
         if (checkbox.checked) {
             container.classList.add('active');
         } else {
@@ -569,6 +574,7 @@
         }
     }
 
+    // Corrección de zona horaria local para fechas
     function parseFechaLocal(fStr) {
         const parts = fStr.split('-');
         return new Date(parts[0], parts[1] - 1, parts[2]);
