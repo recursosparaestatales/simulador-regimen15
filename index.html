@@ -124,7 +124,7 @@
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            width: 10px;
+            width: 100px;
             height: 6px;
             background-color: var(--dark-bg);
             clip-path: polygon(0 0, 100% 0, 50% 100%);
@@ -143,7 +143,6 @@
             gap: 14px;
         }
 
-        /* Toggles e Interruptores Estilizados */
         .checkbox-container {
             background: var(--primary-light);
             padding: 18px;
@@ -233,7 +232,6 @@
             background-color: #FFFFFF;
         }
 
-        /* Botón Principal */
         .btn-calcular {
             width: 100%;
             padding: 16px;
@@ -259,7 +257,6 @@
             transform: translateY(0);
         }
 
-        /* Tarjeta de Resultado (Estilo FinTech) */
         .result {
             margin-top: 24px;
             background: var(--dark-bg);
@@ -318,7 +315,6 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        /* Botones Secundarios */
         .btn-secondary {
             width: 100%;
             padding: 14px;
@@ -424,12 +420,12 @@
 
         <div class="no-print">
             <div class="input-group">
-                <label>Fecha de Ingreso del Agente</label>
+                <label for="fechaIngreso">Fecha de Ingreso del Agente</label>
                 <input type="date" id="fechaIngreso">
             </div>
 
             <div class="input-group">
-                <label>Agrupamiento</label>
+                <label for="agrupamiento">Agrupamiento</label>
                 <div class="select-wrapper">
                     <select id="agrupamiento">
                         <option value="" disabled selected>-- Seleccione Agrupamiento --</option>
@@ -448,7 +444,7 @@
 
             <div class="grid-2">
                 <div class="input-group">
-                    <label>Clase</label>
+                    <label for="clase">Clase</label>
                     <div class="select-wrapper">
                         <select id="clase">
                             <option value="" disabled selected>-- Seleccione --</option>
@@ -456,7 +452,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>Título</label>
+                    <label for="titulo">Título</label>
                     <div class="select-wrapper">
                         <select id="titulo">
                             <option value="" disabled selected>-- Seleccione --</option>
@@ -471,7 +467,7 @@
             </div>
 
             <div class="input-group">
-                <label>Cantidad de Hijos (si correspondiere)</label>
+                <label for="hijos">Cantidad de Hijos (si correspondiere)</label>
                 <input type="number" id="hijos" placeholder="Ej. 0, 1, 2..." min="0">
             </div>
 
@@ -479,19 +475,19 @@
                 <div class="checkbox-legend">Seleccione únicamente si percibe alguno de los siguientes conceptos:</div>
                 
                 <div class="toggle-item" onclick="toggleCheckbox('chkSalud', this)">
-                    <label>Adicional Centro de Salud</label>
+                    <label for="chkSalud">Adicional Centro de Salud</label>
                     <input type="checkbox" id="chkSalud">
                     <div class="switch"></div>
                 </div>
 
                 <div class="toggle-item" onclick="toggleCheckbox('chkAtencionDirecta', this)">
-                    <label>Adicional Atención Directa</label>
+                    <label for="chkAtencionDirecta">Adicional Atención Directa</label>
                     <input type="checkbox" id="chkAtencionDirecta">
                     <div class="switch"></div>
                 </div>
 
                 <div class="toggle-item" onclick="toggleCheckbox('chkGuardia', this)">
-                    <label>Guardia Hospitalaria</label>
+                    <label for="chkGuardia">Guardia Hospitalaria</label>
                     <input type="checkbox" id="chkGuardia">
                     <div class="switch"></div>
                 </div>
@@ -525,10 +521,10 @@
     const FECHA_CALCULO_ADMIN = "2026-07-01";
 
     const VALORES_CLASE = {
-        1: 128433.53, 2: 133361.77, 3: 138289.88, 4: 148145.39,
-        5: 156029.00, 6: 160958.11, 7: 164900.68, 8: 167857.45,
-        9: 172785.24, 10: 177713.41, 11: 182641.54, 12: 187569.16,
-        13: 193482.70, 14: 205309.81, 15: 241777.09, 16: 266416.93, 17: 302883.95
+        1: 137423.87, 2: 142697.09, 3: 147970.18, 4: 158515.57,
+        5: 166952.09, 6: 172225.18, 7: 176443.73, 8: 179607.47,
+        9: 184880.20, 10: 190153.34, 11: 195426.45, 12: 200699.00,
+        13: 207026.49, 14: 219681.49, 15: 258701.48, 16: 285066.12, 17: 324085.83 
     };
 
     const PORCENTAJE_TITULO = {
@@ -573,11 +569,18 @@
         }
     }
 
+    function parseFechaLocal(fStr) {
+        const parts = fStr.split('-');
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
     function calcularAntiguedadAnios(fCalcStr, fIngStr) {
-        let d3 = new Date(fCalcStr);
-        let d5 = new Date(fIngStr);
+        let d3 = parseFechaLocal(fCalcStr);
+        let d5 = parseFechaLocal(fIngStr);
+        
         let limite = new Date(d3.getFullYear() - 1, 11, 31);
         if (d5 > limite) return 0;
+        
         let anios = limite.getFullYear() - d5.getFullYear();
         let diffMeses = limite.getMonth() - d5.getMonth();
         if (diffMeses >= 6) anios += 1;
