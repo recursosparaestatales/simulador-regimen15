@@ -1,62 +1,278 @@
-:root {
-  /* Paleta adjunta */
-  --color-forest: #04202C;    /* Texto principal, encabezados oscuros, fondo contrastado */
-  --color-evergreen: #304040; /* Bordes, sombras sutiles, elementos secundarios */
-  --color-pine: #5B7065;      /* Botones, acentos de interacción, encabezados de tabla */
-  --color-fog: #C9D1C8;       /* Fondos de tarjetas, filas alternadas, bordes suaves */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Haberes - Régimen 15</title>
+    <style>
+        :root {
+            /* Paleta de colores requerida */
+            --forest: #04202C;
+            --evergreen: #304040;
+            --pine: #5B7065;
+            --fog: #C9D1C8;
 
-  /* Aplicaciones funcionales */
-  --bg-main: #F4F6F4;         /* Fondo de página ultra claro basado en Fog */
-  --bg-card: #FFFFFF;         /* Contenedores principales */
-  --bg-accent: var(--color-fog); 
-  
-  --text-primary: var(--color-forest);
-  --text-secondary: var(--color-evergreen);
-  --text-light: #FFFFFF;
+            /* Aplicación de colores */
+            --bg-body: #f4f6f4;
+            --bg-card: #ffffff;
+            --text-main: var(--forest);
+            --text-muted: var(--evergreen);
+            --border-color: var(--fog);
+            --accent-btn: var(--pine);
+            --accent-hover: var(--evergreen);
+            --header-bg: var(--forest);
+            --header-text: #ffffff;
+            --table-row-even: rgba(201, 209, 200, 0.25);
+        }
 
-  --btn-bg: var(--color-pine);
-  --btn-hover: var(--color-evergreen);
-  --border-color: var(--color-fog);
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
 
-/* Ejemplo de aplicación directa en componentes UI */
-body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
-}
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
-.card, .container {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 12px rgba(4, 32, 44, 0.05);
-}
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(4, 32, 44, 0.08);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
 
-th, .header-row {
-  background-color: var(--color-pine);
-  color: var(--text-light);
-}
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 20px;
+            text-align: center;
+        }
 
-tr:nth-child(even) {
-  background-color: rgba(201, 209, 200, 0.2); /* Sombra tenue del tono Fog */
-}
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
 
-button, .btn-primary {
-  background-color: var(--btn-bg);
-  color: var(--text-light);
-  border: none;
-  transition: background-color 0.2s ease;
-}
+        .content {
+            padding: 20px;
+        }
 
-button:hover, .btn-primary:hover {
-  background-color: var(--btn-hover);
-}
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-input, select {
-  border: 1px solid var(--color-pine);
-  color: var(--text-primary);
-}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
-input:focus, select:focus {
-  outline: 2px solid var(--color-pine);
-  border-color: var(--color-forest);
-}
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--pine);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background-color: #fff;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: 2px solid var(--pine);
+            border-color: var(--forest);
+        }
+
+        .btn-calc {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-btn);
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-bottom: 25px;
+        }
+
+        .btn-calc:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .results-table th, .results-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .results-table th {
+            background-color: var(--evergreen);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: var(--table-row-even);
+        }
+
+        .results-table td.amount {
+            text-align: right;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: var(--fog) !important;
+            color: var(--forest);
+        }
+
+        .total-row td {
+            border-top: 2px solid var(--pine);
+            border-bottom: 2px solid var(--pine);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Simulador de Haberes - Régimen 15</h1>
+    </header>
+    
+    <div class="content">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="fechaCalculo">Fecha de Liquidación</label>
+                <input type="date" id="fechaCalculo" value="2026-07-01">
+            </div>
+            <div class="form-group">
+                <label for="fechaIngreso">Fecha de Ingreso</label>
+                <input type="date" id="fechaIngreso" value="2015-03-15">
+            </div>
+            <div class="form-group">
+                <label for="asigClase">Asignación de Clase ($)</label>
+                <input type="number" id="asigClase" value="350000" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="mayorHorario">Mayor Horario ($)</label>
+                <input type="number" id="mayorHorario" value="150000" step="0.01">
+            </div>
+        </div>
+
+        <button class="btn-calc" onclick="calcularLiquidacion()">Calcular Liquidación</button>
+
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Concepto</th>
+                    <th style="text-align: right;">Monto</th>
+                </tr>
+            </thead>
+            <tbody id="resultadoCuerpo">
+                <tr>
+                    <td>Asignación de Clase</td>
+                    <td class="amount" id="resAsigClase">$ 0,00</td>
+                </tr>
+                <tr>
+                    <td>Mayor Horario</td>
+                    <td class="amount" id="resMayorHorario">$ 0,00</td>
+                </tr>
+                <tr>
+                    <td>Antigüedad (<span id="resAniosAntig">0</span> años)</td>
+                    <td class="amount" id="resAntiguedad">$ 0,00</td>
+                </tr>
+                <tr class="total-row">
+                    <td>Total Bruto Estimado</td>
+                    <td class="amount" id="resTotal">$ 0,00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function parseFechaLocal(fechaStr) {
+        if (!fechaStr) return null;
+        const [year, month, day] = fechaStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    }
+
+    // Regla de Antigüedad: Corte al 31/12 del año anterior y fracción > 6 meses suma 1 año
+    function calcularAntiguedadAnios(fCalcStr, fIngStr) {
+        const dCalc = parseFechaLocal(fCalcStr);
+        const dIng = parseFechaLocal(fIngStr);
+        
+        if (!dCalc || !dIng) return 0;
+
+        const anioCorte = dCalc.getFullYear() - 1;
+        const fechaCorte = new Date(anioCorte, 11, 31); 
+
+        if (dIng > fechaCorte) return 0;
+
+        let meses = (fechaCorte.getFullYear() - dIng.getFullYear()) * 12 + (fechaCorte.getMonth() - dIng.getMonth());
+        if (fechaCorte.getDate() < dIng.getDate()) {
+            meses--;
+        }
+
+        const aniosCompletos = Math.floor(meses / 12);
+        const mesesRestantes = meses % 12;
+
+        return mesesRestantes > 6 ? aniosCompletos + 1 : aniosCompletos;
+    }
+
+    function formatearMoneda(valor) {
+        return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(valor);
+    }
+
+    function calcularLiquidacion() {
+        const fCalcStr = document.getElementById('fechaCalculo').value;
+        const fIngStr = document.getElementById('fechaIngreso').value;
+        const asigClase = parseFloat(document.getElementById('asigClase').value) || 0;
+        const mayorHorario = parseFloat(document.getElementById('mayorHorario').value) || 0;
+
+        // Cómputo de años con regla normativa de corte al 31/12
+        const aniosAntig = calcularAntiguedadAnios(fCalcStr, fIngStr);
+        
+        // Base imponible solicitada: (Asignación de Clase + Mayor Horario) * 2% por año
+        const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
+        const total = asigClase + mayorHorario + antiguedad;
+
+        // Renderizado en interfaz
+        document.getElementById('resAsigClase').innerText = formatearMoneda(asigClase);
+        document.getElementById('resMayorHorario').innerText = formatearMoneda(mayorHorario);
+        document.getElementById('resAniosAntig').innerText = aniosAntig;
+        document.getElementById('resAntiguedad').innerText = formatearMoneda(antiguedad);
+        document.getElementById('resTotal').innerText = formatearMoneda(total);
+    }
+
+    // Ejecutar un cálculo inicial al cargar
+    window.onload = calcularLiquidacion;
+</script>
+
+</body>
+</html>
