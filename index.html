@@ -1,26 +1,62 @@
-function calcularAntiguedadAnios(fCalcStr, fIngStr) {
-    const dCalc = parseFechaLocal(fCalcStr);
-    const dIng = parseFechaLocal(fIngStr);
-    
-    if (!dCalc || !dIng) return 0;
+:root {
+  /* Paleta adjunta */
+  --color-forest: #04202C;    /* Texto principal, encabezados oscuros, fondo contrastado */
+  --color-evergreen: #304040; /* Bordes, sombras sutiles, elementos secundarios */
+  --color-pine: #5B7065;      /* Botones, acentos de interacción, encabezados de tabla */
+  --color-fog: #C9D1C8;       /* Fondos de tarjetas, filas alternadas, bordes suaves */
 
-    const anioCorte = dCalc.getFullYear() - 1;
-    const fechaCorte = new Date(anioCorte, 11, 31); 
+  /* Aplicaciones funcionales */
+  --bg-main: #F4F6F4;         /* Fondo de página ultra claro basado en Fog */
+  --bg-card: #FFFFFF;         /* Contenedores principales */
+  --bg-accent: var(--color-fog); 
+  
+  --text-primary: var(--color-forest);
+  --text-secondary: var(--color-evergreen);
+  --text-light: #FFFFFF;
 
-    if (dIng > fechaCorte) return 0;
-
-    let meses = (fechaCorte.getFullYear() - dIng.getFullYear()) * 12 + (fechaCorte.getMonth() - dIng.getMonth());
-    if (fechaCorte.getDate() < dIng.getDate()) {
-        meses--;
-    }
-
-    const aniosCompletos = Math.floor(meses / 12);
-    const mesesRestantes = meses % 12;
-
-    return mesesRestantes > 6 ? aniosCompletos + 1 : aniosCompletos;
+  --btn-bg: var(--color-pine);
+  --btn-hover: var(--color-evergreen);
+  --border-color: var(--color-fog);
 }
 
-// ... (dentro de tu función principal de cálculo) ...
+/* Ejemplo de aplicación directa en componentes UI */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+}
 
-const aniosAntig = calcularAntiguedadAnios(FECHA_CALCULO_ADMIN, fIng);
-const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
+.card, .container {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(4, 32, 44, 0.05);
+}
+
+th, .header-row {
+  background-color: var(--color-pine);
+  color: var(--text-light);
+}
+
+tr:nth-child(even) {
+  background-color: rgba(201, 209, 200, 0.2); /* Sombra tenue del tono Fog */
+}
+
+button, .btn-primary {
+  background-color: var(--btn-bg);
+  color: var(--text-light);
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+button:hover, .btn-primary:hover {
+  background-color: var(--btn-hover);
+}
+
+input, select {
+  border: 1px solid var(--color-pine);
+  color: var(--text-primary);
+}
+
+input:focus, select:focus {
+  outline: 2px solid var(--color-pine);
+  border-color: var(--color-forest);
+}
