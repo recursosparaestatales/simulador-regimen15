@@ -3,275 +3,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Haberes - Régimen 15</title>
+    <title>Régimen 15 - Salud Mendoza </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Paleta de colores requerida */
-            --forest: #04202C;
-            --evergreen: #304040;
-            --pine: #5B7065;
-            --fog: #C9D1C8;
-
-            /* Aplicación de colores */
-            --bg-body: #f4f6f4;
-            --bg-card: #ffffff;
-            --text-main: var(--forest);
-            --text-muted: var(--evergreen);
-            --border-color: var(--fog);
-            --accent-btn: var(--pine);
-            --accent-hover: var(--evergreen);
-            --header-bg: var(--forest);
-            --header-text: #ffffff;
-            --table-row-even: rgba(201, 209, 200, 0.25);
+            --primary: #38B000;
+            --primary-hover: #2d8c00;
+            --primary-light: #E0F9CF;
+            --primary-ring: rgba(56, 176, 0, 0.25);
+            --dark-bg: #000000;
+            --card-bg: #FFFFFF;
+            --text-main: #000000;
+            --text-muted: #555555;
+            --bg-page: #E0F9CF;
+            --border-color: #c4eba8;
+            --border-hover: #a1de72;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-body);
+            background-color: var(--bg-page);
+            background-image: radial-gradient(at 50% 0%, #FFFFFF 0px, transparent 75%);
             color: var(--text-main);
-            padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 32px 16px;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 900px;
             width: 100%;
-            background-color: var(--bg-card);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(4, 32, 44, 0.08);
+            max-width: 520px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 36px 28px;
+            border-radius: 28px;
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border-color);
-            overflow: hidden;
         }
 
-        header {
-            background-color: var(--header-bg);
-            color: var(--header-text);
-            padding: 20px;
+        .header-box {
             text-align: center;
+            margin-bottom: 28px;
         }
 
-        header h1 {
+        .header-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: #1f6300;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 800;
+            color: var(--dark-bg);
+            letter-spacing: -0.025em;
+            line-height: 1.2;
         }
 
-        .content {
-            padding: 20px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+        .input-group {
             margin-bottom: 20px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-bg);
         }
 
-        .form-group label {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .form-group input, .form-group select {
-            padding: 8px 12px;
-            border: 1px solid var(--pine);
-            border-radius: 4px;
-            font-size: 0.95rem;
+        select, input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1.5px solid var(--border-color);
+            font-size: 0.92rem;
+            font-weight: 500;
             color: var(--text-main);
-            background-color: #fff;
+            background-color: #FFFFFF;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: 2px solid var(--pine);
-            border-color: var(--forest);
+        select:hover, input:hover {
+            border-color: var(--primary);
         }
 
-        .btn-calc {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--accent-btn);
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 6px;
+            background-color: var(--dark-bg);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            pointer-events: none;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 4px var(--primary-ring);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .checkbox-container {
+            background: var(--primary-light);
+            padding: 18px;
+            border-radius: 20px;
+            margin: 24px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-legend {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #214f00;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 10px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-bottom: 25px;
+            transition: all 0.2s ease;
         }
 
-        .btn-calc:hover {
-            background-color: var(--accent-hover);
+        .toggle-item:last-child {
+            margin-bottom: 0;
         }
 
-        .results-table {
+        .toggle-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .toggle-item input[type="checkbox"] {
+            display: none;
+        }
+
+        .toggle-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            flex-grow: 1;
+        }
+
+        .switch {
+            width: 42px;
+            height: 24px;
+            background-color: #d1d5db;
+            border-radius: 20px;
+            position: relative;
+            transition: background-color 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .switch::after {
+            content: "";
+            width: 18px;
+            height: 18px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .toggle-item input[type="checkbox"]:checked + .switch {
+            background-color: var(--primary);
+        }
+
+        .toggle-item input[type="checkbox"]:checked + .switch::after {
+            transform: translateX(18px);
+        }
+
+        .toggle-item.active {
+            border-color: var(--primary);
+            background-color: #FFFFFF;
+        }
+
+        .btn-calcular {
             width: 100%;
-            border-collapse: collapse;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            background: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 10px 15px -3px rgba(56, 176, 0, 0.35);
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-calcular:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -3px rgba(56, 176, 0, 0.45);
+        }
+
+        .btn-calcular:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 24px;
+            background: var(--dark-bg);
+            color: #FFFFFF;
+            padding: 28px 24px;
+            border-radius: 22px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(56, 176, 0, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-size: 0.75rem;
+            color: #A3A3A3;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+
+        .result-amount {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+            letter-spacing: -0.03em;
+            word-wrap: break-word;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #E0F9CF;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
             margin-top: 10px;
         }
 
-        .results-table th, .results-table td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+        .btn-auditoria {
+            background: #FFFFFF;
+            color: var(--dark-bg);
+            border: 1.5px solid var(--border-color);
         }
 
-        .results-table th {
-            background-color: var(--evergreen);
-            color: #ffffff;
+        .btn-auditoria:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .btn-print {
+            background: var(--dark-bg);
+            color: #FFFFFF;
+            border: none;
+        }
+
+        .btn-print:hover {
+            background: #222222;
+        }
+
+        .btn-limpiar {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            font-size: 0.82rem;
             font-weight: 600;
+            margin-top: 14px;
+            cursor: pointer;
+            transition: color 0.2s ease;
         }
 
-        .results-table tr:nth-child(even) {
-            background-color: var(--table-row-even);
+        .btn-limpiar:hover {
+            color: var(--dark-bg);
+            text-decoration: underline;
         }
 
-        .results-table td.amount {
-            text-align: right;
-            font-family: monospace;
-            font-size: 1rem;
+        .audit {
+            display: none;
+            margin-top: 16px;
+            max-height: 380px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            background: var(--primary-light);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
         }
 
-        .total-row {
-            font-weight: bold;
-            background-color: var(--fog) !important;
-            color: var(--forest);
+        ul { list-style: none; }
+        li {
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--dark-bg);
+            font-weight: 500;
+        }
+        li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .monto { font-weight: 800; color: var(--dark-bg); }
+
+        .disclaimer {
+            margin-top: 24px;
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            text-align: center;
         }
 
-        .total-row td {
-            border-top: 2px solid var(--pine);
-            border-bottom: 2px solid var(--pine);
+        @media print {
+            .no-print, button, input, label, select, .checkbox-container { display: none !important; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; border: none; width: 100%; padding: 0; }
+            .result { display: block !important; background: white; color: black; border: 1px solid #ccc; box-shadow: none; }
+            .result-amount { color: black; }
+            .result-title { color: #666; }
+            .audit { display: block !important; max-height: none; background: white; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>Simulador de Haberes - Régimen 15</h1>
-    </header>
-    
-    <div class="content">
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="fechaCalculo">Fecha de Liquidación</label>
-                <input type="date" id="fechaCalculo" value="2026-07-01">
-            </div>
-            <div class="form-group">
-                <label for="fechaIngreso">Fecha de Ingreso</label>
-                <input type="date" id="fechaIngreso" value="2015-03-15">
-            </div>
-            <div class="form-group">
-                <label for="asigClase">Asignación de Clase ($)</label>
-                <input type="number" id="asigClase" value="350000" step="0.01">
-            </div>
-            <div class="form-group">
-                <label for="mayorHorario">Mayor Horario ($)</label>
-                <input type="number" id="mayorHorario" value="150000" step="0.01">
-            </div>
+    <div class="card">
+        <div class="header-box">
+            <span class="header-tag">Régimen 15 - agosto 2026</span>
+            <h1>Simulador de Haberes</h1>
         </div>
 
-        <button class="btn-calc" onclick="calcularLiquidacion()">Calcular Liquidación</button>
+        <div class="no-print">
+            <div class="input-group">
+                <label for="fechaIngreso">Fecha de Ingreso del Agente</label>
+                <input type="date" id="fechaIngreso">
+            </div>
 
-        <table class="results-table">
-            <thead>
-                <tr>
-                    <th>Concepto</th>
-                    <th style="text-align: right;">Monto</th>
-                </tr>
-            </thead>
-            <tbody id="resultadoCuerpo">
-                <tr>
-                    <td>Asignación de Clase</td>
-                    <td class="amount" id="resAsigClase">$ 0,00</td>
-                </tr>
-                <tr>
-                    <td>Mayor Horario</td>
-                    <td class="amount" id="resMayorHorario">$ 0,00</td>
-                </tr>
-                <tr>
-                    <td>Antigüedad (<span id="resAniosAntig">0</span> años)</td>
-                    <td class="amount" id="resAntiguedad">$ 0,00</td>
-                </tr>
-                <tr class="total-row">
-                    <td>Total Bruto Estimado</td>
-                    <td class="amount" id="resTotal">$ 0,00</td>
-                </tr>
-            </tbody>
-        </table>
+            <div class="input-group">
+                <label for="agrupamiento">Agrupamiento</label>
+                <div class="select-wrapper">
+                    <select id="agrupamiento">
+                        <option value="" disabled selected>-- Seleccione Agrupamiento --</option>
+                        <option value="I ADM Y TECN">I - Administrativo y Técnico</option>
+                        <option value="II ENFERMERIA">II - Enfermería y Técnico Asistencial</option>
+                        <option value="III PROF SIN CERT">III - Profesional sin Certificación</option>
+                        <option value="III PROF CON CERT">III - Profesional con Certificación</option>
+                        <option value="IV PROFESIONAL ASISTE">IV - Profesional y Sanitario</option>
+                        <option value="V SERV GRALES">V - Servicios Generales</option>
+                        <option value="VI MANTENIMIENTO">VI - Mantenimiento y Producción</option>
+                        <option value="VII ASISTENCIA Y DISCAP">VII - Asistencia a la Ancianidad y Discap.</option>
+                        <option value="VIII SISTEMATIZACION DE DATOS">VIII - Sistematización de Datos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label for="clase">Clase</label>
+                    <div class="select-wrapper">
+                        <select id="clase">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="titulo">Título</label>
+                    <div class="select-wrapper">
+                        <select id="titulo">
+                            <option value="" disabled selected>-- Seleccione --</option>
+                            <option value="UNIVERSITARIO">Universitario</option>
+                            <option value="TERCIARIO">Terciario</option>
+                            <option value="SECUNDARIO">Secundario</option>
+                            <option value="CERTIFICACION">Certificación</option>
+                            <option value="PRIMARIO">Primario</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="hijos">Cantidad de Hijos (si correspondiere)</label>
+                <input type="number" id="hijos" placeholder="Ej. 0, 1, 2..." min="0">
+            </div>
+
+            <div class="checkbox-container">
+                <div class="checkbox-legend">Seleccione únicamente si percibe alguno de los siguientes conceptos:</div>
+                
+                <div class="toggle-item" onclick="toggleCheckbox('chkSalud', this, event)">
+                    <label for="chkSalud">Adicional Centro de Salud</label>
+                    <input type="checkbox" id="chkSalud">
+                    <div class="switch"></div>
+                </div>
+
+                <div class="toggle-item" onclick="toggleCheckbox('chkAtencionDirecta', this, event)">
+                    <label for="chkAtencionDirecta">Adicional Atención Directa</label>
+                    <input type="checkbox" id="chkAtencionDirecta">
+                    <div class="switch"></div>
+                </div>
+
+                <div class="toggle-item" onclick="toggleCheckbox('chkGuardia', this, event)">
+                    <label for="chkGuardia">Guardia Hospitalaria</label>
+                    <input type="checkbox" id="chkGuardia">
+                    <div class="switch"></div>
+                </div>
+            </div>
+
+            <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
+        </div>
+
+        <div class="result" id="panelResultado">
+            <div class="result-title">Total Bruto Estimado</div>
+            <div class="result-amount" id="txtResultado">$ 0,00</div>
+            <div class="result-badge" id="txtDetalle">Antigüedad: -</div>
+        </div>
+
+        <div id="controlesExtra" style="display:none;">
+            <button class="btn-secondary btn-auditoria no-print" onclick="toggleAudit()">Ver desglose de Ítems (Recibo)</button>
+            <div class="audit" id="panelAudit"></div>
+            <button class="btn-secondary btn-print no-print" onclick="window.print()">Imprimir o Guardar PDF</button>
+            <div style="text-align: center;">
+                <button class="btn-limpiar no-print" onclick="reiniciarSimulador()">← Realizar otro cálculo</button>
+            </div>
+            
+            <div class="disclaimer">
+                Simulador de carácter <strong>orientativo</strong> para el Régimen 15. Los montos finales pueden variar según liquidación oficial.
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function parseFechaLocal(fechaStr) {
-        if (!fechaStr) return null;
-        const [year, month, day] = fechaStr.split('-').map(Number);
-        return new Date(year, month - 1, day);
+    const FECHA_CALCULO_ADMIN = "2026-07-01";
+
+    // Valores corregidos a sintaxis numérica válida en JS
+    const VALORES_CLASE = {
+        1: 137423.87, 2: 142697.09, 3: 147970.18, 4: 158515.57,
+        5: 166952.09, 6: 172225.18, 7: 176443.73, 8: 179607.47,
+        9: 184880.20, 10: 190153.34, 11: 195426.45, 12: 200699.00,
+        13: 207026.49, 14: 219681.49, 15: 258701.48, 16: 285066.12, 17: 324085.83 
+    };
+
+    const PORCENTAJE_TITULO = {
+        "UNIVERSITARIO": 0.9,
+        "TERCIARIO": 0.8,
+        "SECUNDARIO": 0.4,
+        "CERTIFICACION": 0.3,
+        "PRIMARIO": 0.0
+    };
+
+    const COEF_1414 = {
+        "I ADM Y TECN": 1.2, "II ENFERMERIA": 1.8, "III PROF SIN CERT": 1.2,
+        "III PROF CON CERT": 1.45, "IV PROFESIONAL ASISTE": 1.8, "V SERV GRALES": 1.45,
+        "VI MANTENIMIENTO": 1.45, "VII ASISTENCIA Y DISCAP": 1.8, "VIII SISTEMATIZACION DE DATOS": 1.2
+    };
+
+    const COEF_SANIDAD = {
+        "I ADM Y TECN": 0.1510287, "II ENFERMERIA": 0.6009645, "III PROF SIN CERT": 0.15,
+        "III PROF CON CERT": 0.15, "IV PROFESIONAL ASISTE": 0.30075357, "V SERV GRALES": 0.30075357,
+        "VI MANTENIMIENTO": 0.30075357, "VII ASISTENCIA Y DISCAP": 0.50098827, "VIII SISTEMATIZACION DE DATOS": 0
+    };
+
+    const selClase = document.getElementById("clase");
+    for(let i=1; i<=17; i++) {
+        let opt = document.createElement("option");
+        opt.value = i; 
+        opt.innerText = "Clase " + i;
+        selClase.appendChild(opt);
     }
 
-    // Regla de Antigüedad: Corte al 31/12 del año anterior y fracción > 6 meses suma 1 año
+    function fmt(val) {
+        return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    // Corrección para evitar el doble disparo del checkbox al hacer clic
+    function toggleCheckbox(id, container, event) {
+        if (event.target.tagName !== 'INPUT') {
+            const checkbox = document.getElementById(id);
+            checkbox.checked = !checkbox.checked;
+        }
+        const checkbox = document.getElementById(id);
+        if (checkbox.checked) {
+            container.classList.add('active');
+        } else {
+            container.classList.remove('active');
+        }
+    }
+
+    // Corrección de zona horaria local para fechas
+    function parseFechaLocal(fStr) {
+        const parts = fStr.split('-');
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
     function calcularAntiguedadAnios(fCalcStr, fIngStr) {
-        const dCalc = parseFechaLocal(fCalcStr);
-        const dIng = parseFechaLocal(fIngStr);
+        let d3 = parseFechaLocal(fCalcStr);
+        let d5 = parseFechaLocal(fIngStr);
         
-        if (!dCalc || !dIng) return 0;
+        let limite = new Date(d3.getFullYear() - 1, 11, 31);
+        if (d5 > limite) return 0;
+        
+        let anios = limite.getFullYear() - d5.getFullYear();
+        let diffMeses = limite.getMonth() - d5.getMonth();
+        if (diffMeses >= 6) anios += 1;
+        return Math.max(0, anios);
+    }
 
-        const anioCorte = dCalc.getFullYear() - 1;
-        const fechaCorte = new Date(anioCorte, 11, 31); 
+    function ejecutarCalculo() {
+        const fIng = document.getElementById("fechaIngreso").value;
+        const agrup = document.getElementById("agrupamiento").value;
+        const clase = parseInt(document.getElementById("clase").value);
+        const tituloKey = document.getElementById("titulo").value;
+        const hijosVal = document.getElementById("hijos").value;
+        const hijos = parseInt(hijosVal) || 0;
 
-        if (dIng > fechaCorte) return 0;
-
-        let meses = (fechaCorte.getFullYear() - dIng.getFullYear()) * 12 + (fechaCorte.getMonth() - dIng.getMonth());
-        if (fechaCorte.getDate() < dIng.getDate()) {
-            meses--;
+        if (!fIng || !agrup || isNaN(clase) || !tituloKey) {
+            alert("Por favor, complete la Fecha de Ingreso, Agrupamiento, Clase y Título antes de calcular.");
+            return;
         }
 
-        const aniosCompletos = Math.floor(meses / 12);
-        const mesesRestantes = meses % 12;
+        const chkSalud = document.getElementById("chkSalud").checked;
+        const chkAtencion = document.getElementById("chkAtencionDirecta").checked;
+        const chkGuardia = document.getElementById("chkGuardia").checked;
 
-        return mesesRestantes > 6 ? aniosCompletos + 1 : aniosCompletos;
-    }
-
-    function formatearMoneda(valor) {
-        return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(valor);
-    }
-
-    function calcularLiquidacion() {
-        const fCalcStr = document.getElementById('fechaCalculo').value;
-        const fIngStr = document.getElementById('fechaIngreso').value;
-        const asigClase = parseFloat(document.getElementById('asigClase').value) || 0;
-        const mayorHorario = parseFloat(document.getElementById('mayorHorario').value) || 0;
-
-        // Cómputo de años con regla normativa de corte al 31/12
-        const aniosAntig = calcularAntiguedadAnios(fCalcStr, fIngStr);
+        const asigClase = VALORES_CLASE[clase];
+        const riesgoPsico = Math.round(asigClase * 0.82 * 100) / 100;
+        const adicTitulo = Math.round(asigClase * PORCENTAJE_TITULO[tituloKey] * 100) / 100;
+        const clase13 = VALORES_CLASE[13];
+        const item1414 = Math.round(clase13 * COEF_1414[agrup] * 100) / 100;
+        const mayorHorario = (asigClase / 25) * 2.1 * 15;
+        const baseSanidad = (agrup === "II ENFERMERIA") ? asigClase : VALORES_CLASE[8];
+        const estadoSanitario = baseSanidad * COEF_SANIDAD[agrup];
         
-        // Base imponible solicitada: (Asignación de Clase + Mayor Horario) * 2% por año
+        const aniosAntig = calcularAntiguedadAnios(FECHA_CALCULO_ADMIN, fIng);
         const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
-        const total = asigClase + mayorHorario + antiguedad;
+        
+        const adicSalud = chkSalud ? (VALORES_CLASE[8] * 0.2) : 0;
+        const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
+        const guardiaHosp = chkGuardia ? (VALORES_CLASE[9] * 0.35) : 0;
 
-        // Renderizado en interfaz
-        document.getElementById('resAsigClase').innerText = formatearMoneda(asigClase);
-        document.getElementById('resMayorHorario').innerText = formatearMoneda(mayorHorario);
-        document.getElementById('resAniosAntig').innerText = aniosAntig;
-        document.getElementById('resAntiguedad').innerText = formatearMoneda(antiguedad);
-        document.getElementById('resTotal').innerText = formatearMoneda(total);
+        const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud + guardiaHosp;
+        const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
+        
+        const subtotal = asigClase + riesgoPsico + adicTitulo + item1414 + mayorHorario + estadoSanitario + antiguedad + presentismo + adicSalud + adicAtencion + guardiaHosp;
+        
+        let asigHijos = 0;
+        if (hijos > 0) {
+            if (subtotal <= 790000) asigHijos = 35000 * hijos;
+            else if (subtotal <= 1185000) asigHijos = 27000 * hijos;
+            else if (subtotal <= 2700000) asigHijos = 18000 * hijos;
+        }
+
+        const total = subtotal + asigHijos;
+
+        document.getElementById("panelResultado").style.display = "block";
+        document.getElementById("controlesExtra").style.display = "block";
+        
+        document.getElementById("txtResultado").innerText = fmt(total);
+        document.getElementById("txtDetalle").innerText = `Antigüedad computada: ${aniosAntig} años`;
+
+        document.getElementById("panelAudit").innerHTML = `
+            <p style="font-weight:700; margin-bottom:12px; color:var(--dark-bg)">Detalle de Haberes (Régimen 15):</p>
+            <ul>
+                <li><span>Asignación de Clase:</span> <span class="monto">${fmt(asigClase)}</span></li>
+                <li><span>Riesgo Psicofísico:</span> <span class="monto">${fmt(riesgoPsico)}</span></li>
+                ${adicTitulo ? `<li><span>Adicional Título:</span> <span class="monto">${fmt(adicTitulo)}</span></li>` : ''}
+                <li><span>(1414) Paritaria 2022:</span> <span class="monto">${fmt(item1414)}</span></li>
+                <li><span>Mayor Horario:</span> <span class="monto">${fmt(mayorHorario)}</span></li>
+                <li><span>Estado Sanitario:</span> <span class="monto">${fmt(estadoSanitario)}</span></li>
+                <li><span>Antigüedad (${aniosAntig} a):</span> <span class="monto">${fmt(antiguedad)}</span></li>
+                <li><span>Presentismo:</span> <span class="monto">${fmt(presentismo)}</span></li>
+                ${adicSalud ? `<li><span>Centro de Salud:</span> <span class="monto">${fmt(adicSalud)}</span></li>` : ''}
+                ${adicAtencion ? `<li><span>Atención Directa:</span> <span class="monto">${fmt(adicAtencion)}</span></li>` : ''}
+                ${guardiaHosp ? `<li><span>Guardia Hospitalaria:</span> <span class="monto">${fmt(guardiaHosp)}</span></li>` : ''}
+                ${asigHijos ? `<li><span>Asignación por Hijos (${hijos}):</span> <span class="monto">${fmt(asigHijos)}</span></li>` : ''}
+            </ul>
+        `;
     }
 
-    // Ejecutar un cálculo inicial al cargar
-    window.onload = calcularLiquidacion;
+    function toggleAudit() {
+        const p = document.getElementById("panelAudit");
+        p.style.display = (p.style.display === "block") ? "none" : "block";
+    }
+
+    function reiniciarSimulador() {
+        document.getElementById("fechaIngreso").value = "";
+        document.getElementById("agrupamiento").value = "";
+        document.getElementById("clase").value = "";
+        document.getElementById("titulo").value = "";
+        document.getElementById("hijos").value = "";
+
+        ['chkSalud', 'chkAtencionDirecta', 'chkGuardia'].forEach(id => {
+            const chk = document.getElementById(id);
+            chk.checked = false;
+            chk.parentElement.classList.remove('active');
+        });
+
+        document.getElementById("panelResultado").style.display = "none";
+        document.getElementById("controlesExtra").style.display = "none";
+        document.getElementById("panelAudit").style.display = "none";
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 </script>
 
 </body>
