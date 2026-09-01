@@ -571,14 +571,17 @@
     }
 
     function parseFechaLocal(fStr) {
+        if (!fStr) return null;
         const parts = fStr.split('-');
-        return new Date(parts[0], parts[1] - 1, parts[2]);
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
     }
 
     function calcularAntiguedadAnios(fCalcStr, fIngStr) {
-        let dCalc = parseFechaLocal(fCalcStr);
-        let dIng = parseFechaLocal(fIngStr);
+        const dCalc = parseFechaLocal(fCalcStr);
+        const dIng = parseFechaLocal(fIngStr);
         
+        if (!dCalc || !dIng) return 0;
+
         let anios = dCalc.getFullYear() - dIng.getFullYear();
         let m = dCalc.getMonth() - dIng.getMonth();
         
