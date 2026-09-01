@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Régimen 15 - Salud Mendoza </title>
+    <title>Régimen 15 - Salud Mendoza</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -474,23 +474,23 @@
             <div class="checkbox-container">
                 <div class="checkbox-legend">Seleccione únicamente si percibe alguno de los siguientes conceptos:</div>
                 
-                <div class="toggle-item" onclick="toggleCheckbox('chkSalud', this, event)">
-                    <label for="chkSalud">Adicional Centro de Salud</label>
+                <label class="toggle-item" for="chkSalud">
+                    <span>Adicional Centro de Salud</span>
                     <input type="checkbox" id="chkSalud">
                     <div class="switch"></div>
-                </div>
+                </label>
 
-                <div class="toggle-item" onclick="toggleCheckbox('chkAtencionDirecta', this, event)">
-                    <label for="chkAtencionDirecta">Adicional Atención Directa</label>
+                <label class="toggle-item" for="chkAtencionDirecta">
+                    <span>Adicional Atención Directa</span>
                     <input type="checkbox" id="chkAtencionDirecta">
                     <div class="switch"></div>
-                </div>
+                </label>
 
-                <div class="toggle-item" onclick="toggleCheckbox('chkGuardia', this, event)">
-                    <label for="chkGuardia">Guardia Hospitalaria</label>
+                <label class="toggle-item" for="chkGuardia">
+                    <span>Guardia Hospitalaria</span>
                     <input type="checkbox" id="chkGuardia">
                     <div class="switch"></div>
-                </div>
+                </label>
             </div>
 
             <button class="btn-calcular" onclick="ejecutarCalculo()">CALCULAR SUELDO ESTIMADO</button>
@@ -520,7 +520,6 @@
 <script>
     const FECHA_CALCULO_ADMIN = "2026-07-01";
 
-    // Valores corregidos a sintaxis numérica válida en JS
     const VALORES_CLASE = {
         1: 137423.87, 2: 142697.09, 3: 147970.18, 4: 158515.57,
         5: 166952.09, 6: 172225.18, 7: 176443.73, 8: 179607.47,
@@ -556,25 +555,21 @@
         selClase.appendChild(opt);
     }
 
+    // Listener para actualizar estilos visuales de toggles
+    document.querySelectorAll('.toggle-item input[type="checkbox"]').forEach(chk => {
+        chk.addEventListener('change', function() {
+            if(this.checked) {
+                this.closest('.toggle-item').classList.add('active');
+            } else {
+                this.closest('.toggle-item').classList.remove('active');
+            }
+        });
+    });
+
     function fmt(val) {
         return "$ " + val.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    // Corrección para evitar el doble disparo del checkbox al hacer clic
-    function toggleCheckbox(id, container, event) {
-        if (event.target.tagName !== 'INPUT') {
-            const checkbox = document.getElementById(id);
-            checkbox.checked = !checkbox.checked;
-        }
-        const checkbox = document.getElementById(id);
-        if (checkbox.checked) {
-            container.classList.add('active');
-        } else {
-            container.classList.remove('active');
-        }
-    }
-
-    // Corrección de zona horaria local para fechas
     function parseFechaLocal(fStr) {
         const parts = fStr.split('-');
         return new Date(parts[0], parts[1] - 1, parts[2]);
@@ -615,16 +610,18 @@
         const adicTitulo = Math.round(asigClase * PORCENTAJE_TITULO[tituloKey] * 100) / 100;
         const clase13 = VALORES_CLASE[13];
         const item1414 = Math.round(clase13 * COEF_1414[agrup] * 100) / 100;
-        const mayorHorario = (asigClase / 25) * 2.1 * 15;
+        
+        const mayorHorario = Math.round(((asigClase / 25) * 2.1 * 15) * 100) / 100;
+        
         const baseSanidad = (agrup === "II ENFERMERIA") ? asigClase : VALORES_CLASE[8];
-        const estadoSanitario = baseSanidad * COEF_SANIDAD[agrup];
+        const estadoSanitario = Math.round((baseSanidad * COEF_SANIDAD[agrup]) * 100) / 100;
         
         const aniosAntig = calcularAntiguedadAnios(FECHA_CALCULO_ADMIN, fIng);
         const antiguedad = Math.round((asigClase + mayorHorario) * aniosAntig * 0.02 * 100) / 100;
         
-        const adicSalud = chkSalud ? (VALORES_CLASE[8] * 0.2) : 0;
-        const adicAtencion = chkAtencion ? (asigClase * 0.1) : 0;
-        const guardiaHosp = chkGuardia ? (VALORES_CLASE[9] * 0.35) : 0;
+        const adicSalud = chkSalud ? Math.round((VALORES_CLASE[8] * 0.2) * 100) / 100 : 0;
+        const adicAtencion = chkAtencion ? Math.round((asigClase * 0.1) * 100) / 100 : 0;
+        const guardiaHosp = chkGuardia ? Math.round((VALORES_CLASE[9] * 0.35) * 100) / 100 : 0;
 
         const basePresentismo = asigClase + riesgoPsico + adicTitulo + mayorHorario + estadoSanitario + antiguedad + adicSalud + guardiaHosp;
         const presentismo = Math.round(basePresentismo * 0.13 * 100) / 100;
@@ -680,7 +677,7 @@
         ['chkSalud', 'chkAtencionDirecta', 'chkGuardia'].forEach(id => {
             const chk = document.getElementById(id);
             chk.checked = false;
-            chk.parentElement.classList.remove('active');
+            chk.closest('.toggle-item').classList.remove('active');
         });
 
         document.getElementById("panelResultado").style.display = "none";
