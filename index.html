@@ -576,15 +576,16 @@
     }
 
     function calcularAntiguedadAnios(fCalcStr, fIngStr) {
-        let d3 = parseFechaLocal(fCalcStr);
-        let d5 = parseFechaLocal(fIngStr);
+        let dCalc = parseFechaLocal(fCalcStr);
+        let dIng = parseFechaLocal(fIngStr);
         
-        let limite = new Date(d3.getFullYear() - 1, 11, 31);
-        if (d5 > limite) return 0;
+        let anios = dCalc.getFullYear() - dIng.getFullYear();
+        let m = dCalc.getMonth() - dIng.getMonth();
         
-        let anios = limite.getFullYear() - d5.getFullYear();
-        let diffMeses = limite.getMonth() - d5.getMonth();
-        if (diffMeses >= 6) anios += 1;
+        if (m < 0 || (m === 0 && dCalc.getDate() < dIng.getDate())) {
+            anios--;
+        }
+        
         return Math.max(0, anios);
     }
 
